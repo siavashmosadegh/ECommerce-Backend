@@ -1,9 +1,14 @@
-'use strict';
-
-const express = require('express');
-const config = require('./config');
+import express from 'express';
 const app = express();
+import dotenv from 'dotenv';
 
-app.listen(config.port,() => {
-    console.log(`server is listening on PORT ${config.port} in ${config.nodeenv} mode`)
-})
+dotenv.config();
+
+// import all routes
+import productRoutes from './routes/productRoutes.js';
+
+app.use("/api/v1", productRoutes);
+
+app.listen(process.env.PORT,() => {
+    console.log(`server is listening on PORT ${process.env.PORT} in ${process.env.NODE_ENV}`);
+});

@@ -1,7 +1,8 @@
 'use strict'
-const dotenv = require('dotenv');
-const assert = require('assert');
-
+// const dotenv = require('dotenv');
+// const assert = require('assert');
+import dotenv from 'dotenv';
+import assert from 'assert';
 dotenv.config();
 
 const {
@@ -20,12 +21,8 @@ const sqlEncrypt = process.env.ENCRYPT === "true";
 assert(PORT, 'Port is required');
 assert(HOST, 'HOST is required');
 
-module.exports = {
-    port: PORT,
-    host: HOST,
-    url: HOST_URL,
-    nodeenv: NODE_ENV,
-    sql: {
+const sqlconfig = () => {
+    return {
         server: SQL_SERVER,
         database: SQL_DATABASE,
         user: SQL_USER,
@@ -36,3 +33,23 @@ module.exports = {
         }
     }
 }
+
+export {
+    PORT as port,
+    HOST as host,
+    HOST_URL as url,
+    NODE_ENV as nodeenv,
+    sqlconfig as sqlconfig
+    // sql: {
+    //     server: SQL_SERVER,
+    //     database: SQL_DATABASE,
+    //     user: SQL_USER,
+    //     password: SQL_PASSWORD,
+    //     options: {
+    //         encrypt: sqlEncrypt,
+    //         enableArithAbort: true
+    //     }
+    // }
+}
+
+// export default host;
