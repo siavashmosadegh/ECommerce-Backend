@@ -3,7 +3,7 @@
 import {loadSqlQueries} from '../utils.js';
 //import {sqlconfig} from '../../config.js';
 import pkg from 'mssql';
-const {connect} = pkg;
+const {connect,sql,NVarChar,Int} = pkg;
 
 const getProductsData = async () => {
     try {
@@ -25,6 +25,35 @@ const getProductsData = async () => {
     }
 }
 
+const createNewProduct = async (productData) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }            
+        })
+        const sqlQueries = await loadSqlQueries('products');
+        const insertProduct = await pool.request()
+                                    .input('ProductName', NVarChar(100), productData.ProductName)
+                                    .input('Description', NVarChar(100), productData.Description)
+                                    .input('SKU', NVarChar(100), productData.SKU)
+                                    .input('CategoryID', Int(), productData.CategoryID)
+                                    .input('InventoryID', Int(), productData.InventoryID)
+                                    .input('Price', Int(), productData.Price)
+                                    .input('DiscountID', Int(), productData.DiscountID)
+                                    .query(sqlQueries.createproduct);
+        return insertProduct.recordset;
+    } catch (error) {
+        return error.message
+    }
+}
+
 export {
-    getProductsData
+    getProductsData,
+    createNewProduct
 }

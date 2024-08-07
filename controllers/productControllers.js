@@ -1,4 +1,7 @@
-import {getProductsData} from "../data/products/index.js";
+import {
+    getProductsData,
+    createNewProduct
+} from "../data/products/index.js";
 
 const getProducts = async (req, res, next) => {
     try {
@@ -9,6 +12,17 @@ const getProducts = async (req, res, next) => {
     }
 }
 
+const createProducts = async (req, res, next) => {
+    try {
+        const data = req.body;
+        const createdProduct = await createNewProduct(data);
+        res.send(createdProduct);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+}
+
 export {
-    getProducts
+    getProducts,
+    createProducts
 }
