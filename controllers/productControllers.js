@@ -2,7 +2,8 @@ import {
     getProductsData,
     createNewProduct,
     getProductById,
-    updateProductById
+    updateProductById,
+    deleteProductById
 } from "../data/products/index.js";
 
 const getProducts = async (req, res, next) => {
@@ -38,7 +39,7 @@ const getProductDetails = async (req, res) => {
 // Update product details : /api/v1/product/:id
 const updateProduct = async (req, res) => {
     const productId = req.params.id;
-    const oneProduct = await getProductById(productId, req.body);
+    const oneProduct = await getProductById(productId);
 
     if (!oneProduct) {
         return res.status(404).json({
@@ -54,10 +55,28 @@ const updateProduct = async (req, res) => {
 
 }
 
+// Delete product details : /api/v1/product/:id
+const deleteProduct = async (req, res) => {
+    const productId = req.params.id;
+    const oneProduct = await getProductById(productId);
+
+    if (oneProduct == null || oneProduct.length == 0) {
+        return res.status(404).json({
+            error: "Product not found"
+        });
+    }
+
+    await deleteProductById(productId);
+
+    res.status(200).json({
+        message: "Product is successfully deleted !!"
+    })
+}
 
 export {
     getProducts,
     createProducts,
     getProductDetails,
-    updateProduct
+    updateProduct,
+    deleteProduct
 }

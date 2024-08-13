@@ -100,7 +100,30 @@ const updateProductById = async (productId, productData) => {
                                     .query(sqlQueries.updateProduct);
         return update.recordset;
     } catch (error) {
-        return error.message
+        return error.message;
+    }
+}
+
+const deleteProductById = async (productId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+        const sqlQueries = await loadSqlQueries('products');
+        const deleted = await pool.request()
+                                .input('productId', Int(), productId)
+                                .query(sqlQueries.deleteProduct);
+        return deleted.recordset;
+
+    } catch (error) {
+        return error.message;
     }
 }
 
@@ -108,5 +131,6 @@ export {
     getProductsData,
     createNewProduct,
     getProductById,
-    updateProductById
+    updateProductById,
+    deleteProductById
 }
