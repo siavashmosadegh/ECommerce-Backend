@@ -5,6 +5,7 @@ import {
     updateProductById,
     deleteProductById
 } from "../data/products/index.js";
+import ErrorHandler from "../utils/errorHandler.js";
 
 const getProducts = async (req, res, next) => {
     try {
@@ -26,25 +27,30 @@ const createProducts = async (req, res, next) => {
 }
 
 // Get single product details : /api/v1/products/:id
-const getProductDetails = async (req, res) => {
+const getProductDetails = async (req, res, next) => {
     try {
         const productId = req.params.id;
         const oneProduct = await getProductById(productId);
-        res.send(oneProduct);
+
+        if (oneProduct == null || oneProduct.length == 0) {
+            return next(new ErrorHandler('Product not found',404));
+        }
+
+        res.status(200).json({
+            oneProduct
+        })
     } catch (error) {
         res.status(400).send(error.message);
     }
 }
 
 // Update product details : /api/v1/product/:id
-const updateProduct = async (req, res) => {
+const updateProduct = async (req, res, next) => {
     const productId = req.params.id;
     const oneProduct = await getProductById(productId);
 
-    if (!oneProduct) {
-        return res.status(404).json({
-            error: "Product not found"
-        });
+    if (oneProduct == null || oneProduct.length == 0) {
+        return next(new ErrorHandler('Product not found',404));
     }
 
     const product = await updateProductById(productId, req.body);
@@ -61,9 +67,7 @@ const deleteProduct = async (req, res) => {
     const oneProduct = await getProductById(productId);
 
     if (oneProduct == null || oneProduct.length == 0) {
-        return res.status(404).json({
-            error: "Product not found"
-        });
+        return next(new ErrorHandler('Product not found',404));
     }
 
     await deleteProductById(productId);
