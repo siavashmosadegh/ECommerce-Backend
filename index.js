@@ -15,6 +15,15 @@ app.use("/api/v1", productRoutes);
 
 app.use(errorMiddleware);
 
-app.listen(process.env.PORT,() => {
+const server = app.listen(process.env.PORT,() => {
     console.log(`server is listening on PORT ${process.env.PORT} in ${process.env.NODE_ENV}`);
+});
+
+// Handle Unhandled Promise rejections
+process.on('unhandledRejection', (err) => {
+    console.log(`ERROR: ${err}`);
+    console.log("Shutting down server due to Unhandled Promies Rejection");
+    server.close(() => {
+        process.exit(1);
+    });
 });
