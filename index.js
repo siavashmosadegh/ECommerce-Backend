@@ -4,8 +4,14 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import errorMiddleware from './middlewares/errors.js';
 
-dotenv.config();
+// Handle Uncaught exceptions
+process.on('uncaughtException', (err) => {
+    console.log(`ERROR ${err}`);
+    console.log('Shutting down due to uncaught exception');
+    process.exit(1);
+})
 
+dotenv.config();
 
 // import all routes
 import productRoutes from './routes/productRoutes.js';
