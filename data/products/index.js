@@ -5,7 +5,7 @@ import {loadSqlQueries} from '../utils.js';
 import pkg from 'mssql';
 const {connect,sql,NVarChar,Int} = pkg;
 
-const getProductsData = async () => {
+const getProductsData = async (search) => {
     try {
         let pool = await connect({
             server: process.env.SQL_SERVER,
@@ -18,7 +18,14 @@ const getProductsData = async () => {
             }
         });
         const sqlQueries = await loadSqlQueries('products');
-        const list = await pool.request().query(sqlQueries.productslist);
+        let list = null;
+        if (search !== null && search !== undefined) {
+            list = await pool.request()
+                            .input('ProductName', NVarChar(100), search)
+                            .query(sqlQueries.searchProduct);
+        } else if (search === undefined) {
+            list = await pool.request().query(sqlQueries.productslist);
+        }
         return list.recordset;
     } catch (error) {
         return error.message

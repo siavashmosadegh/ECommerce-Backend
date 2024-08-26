@@ -10,8 +10,8 @@ import ErrorHandler from "../utils/errorHandler.js";
 
 const getProducts = catchAsyncErrors( async (req, res, next) => {
     try {
-        const events = await getProductsData();
-        res.send(events);
+        const products = await getProductsData(req.query.search);
+        res.send(products);
     } catch (error) {
         res.status(400).send(error.message);
     }
