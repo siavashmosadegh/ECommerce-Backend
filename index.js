@@ -13,6 +13,8 @@ process.on('uncaughtException', (err) => {
 
 dotenv.config();
 
+console.log("siavash is back !!!");
+
 // import all routes
 import productRoutes from './routes/productRoutes.js';
 
