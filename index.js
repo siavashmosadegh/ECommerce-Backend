@@ -18,10 +18,14 @@ console.log("siavash is back !!!");
 // import all routes
 import productRoutes from './routes/productRoutes.js';
 import authenticationRoutes from './routes/authenticationRoutes.js';
+import authenticateToken from './middlewares/authenticateTokenV1.js';
 
 app.use(bodyParser.json());
 app.use("/api/v1", productRoutes);
 app.use("/api/v1",authenticationRoutes);
+app.get('/api/v1/protecteed', authenticateToken, (req, res) => {
+    res.json({ user: req.user });
+});
 
 app.use(errorMiddleware);
 

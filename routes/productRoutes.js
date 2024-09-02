@@ -13,6 +13,6 @@ router.route("/products").get(getProducts);
 router.route("/admin/products").post(createProducts);
 router.route("/products/:id").get(getProductDetails);
 router.route("/products/:id").put(updateProduct);
-router.route("/products/:id").delete(deleteProduct)
+router.route("/products/:id").delete(deleteProduct);
 
 export default router;
