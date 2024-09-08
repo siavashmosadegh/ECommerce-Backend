@@ -3,6 +3,7 @@ const app = express();
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import errorMiddleware from './middlewares/errors.js';
+import cors from 'cors';
 
 // Handle Uncaught exceptions
 process.on('uncaughtException', (err) => {
@@ -14,6 +15,8 @@ process.on('uncaughtException', (err) => {
 dotenv.config();
 
 console.log("siavash is back !!!");
+
+app.use(cors());
 
 // import all routes
 import productRoutes from './routes/productRoutes.js';
