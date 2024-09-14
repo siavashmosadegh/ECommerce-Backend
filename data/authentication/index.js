@@ -6,9 +6,11 @@ import {loadSqlQueries} from '../utils.js';
 import pkg from 'mssql';
 import pkg2 from 'bcryptjs';
 import pkg3 from 'jsonwebtoken';
-const {connect,sql,NVarChar,Int} = pkg;
+const {connect,sql,NVarChar,DateTime} = pkg;
 const {hash, compare, compareSync} = pkg2;
-const {sign} = pkg3
+const {sign} = pkg3;
+import { v4 as uuidv4 } from 'uuid';
+import sendResetEmail from '../../middlewares/email.js';
 
 const registerUsersData = async (username, email, password) => {
     try {
@@ -98,7 +100,57 @@ const loginUsersData = async (username, password) => {
     }
 }
 
+const forgotPasswordData = async (username) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+        
+        //check if user does not exist
+        const existingUser = await pool.request()
+            .input('username', NVarChar, username)
+            .query(sqlQueries.checkUserExistanceViaUsername);
+
+        if (existingUser.recordset.length === 0 ) {
+            return "Login Failed: User Does Not Exist";
+        }
+
+        // Generate a unique reset token and expiry time (e.g., 1 hour from now)
+        const resetToken = uuidv4();
+        const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+        const user = existingUser.recordset[0];
+
+        console.log(`reset token : ${resetToken}`)
+
+        try {
+            await pool.request()
+                .input('username', NVarChar, user.UserName)
+                .input('reset_token', NVarChar, resetToken)
+                .input('reset_token_expiry', DateTime, resetTokenExpiry)
+                .query(sqlQueries.insertResetTokenAndResetTokenExpiry);
+
+            await sendResetEmail(user, resetToken);
+            return "Password Reset Email Was Sent Successfully";
+        } catch (error) {
+            return error.message;
+        }
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     registerUsersData,
-    loginUsersData
+    loginUsersData,
+    forgotPasswordData
 }

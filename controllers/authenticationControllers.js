@@ -1,6 +1,7 @@
 import {
     registerUsersData,
-    loginUsersData
+    loginUsersData,
+    forgotPasswordData
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -40,7 +41,23 @@ const loginUsers = catchAsyncErrors( async (req,res) => {
     }
 })
 
+const forgotPassword = catchAsyncErrors( async (req, res) => {
+
+    const {username} = req.body;
+
+    let result = await forgotPasswordData(username);
+
+    console.log(result);
+
+    if (result === "Login Failed: User Does Not Exist") {
+        res.status(400).json({ message: "Login Failed: User Does Not Exist" });
+    } else if (result === "Password Reset Email Was Sent Successfully") {
+        res.status(200).json({ message: "Password Reset Email Was Sent Successfully"})
+    }
+})
+
 export {
     registerUsers,
-    loginUsers
+    loginUsers,
+    forgotPassword
 }
