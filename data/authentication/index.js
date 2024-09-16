@@ -126,7 +126,7 @@ const forgotPasswordData = async (username) => {
 
         // Generate a unique reset token and expiry time (e.g., 1 hour from now)
         const resetToken = uuidv4();
-        const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+        const resetTokenExpiry = new Date(Date.now() + 10000); // 1 hour
         const user = existingUser.recordset[0];
 
         console.log(`reset token : ${resetToken}`)
@@ -149,8 +149,60 @@ const forgotPasswordData = async (username) => {
     }
 }
 
+const resetPasswordData = async (token, newPassword) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        const record = await pool.request()
+            .input("token", NVarChar, token)
+            .query(sqlQueries.getUsersEmailAndResetTokenExpire);
+
+        if (record.recordset.length === 0) {
+            return "Invalid or Expired Token"
+        }
+
+        const { Email, reset_token_expiry } = record.recordset[0];
+
+        console.log(`email : ${Email}`);
+        console.log(`resetTokenExpiry: ${reset_token_expiry}`);
+
+        if (new Date(reset_token_expiry) < new Date()) {
+            return "Token has expired";
+        }
+
+        const hashedPassword = await hash(newPassword,10);
+
+        // Update password in the database and clear the reset token
+        try {
+            await pool.request()
+                .input("email", NVarChar, Email)
+                .input("hashedPassword", NVarChar, hashedPassword)
+                .query(sqlQueries.updatePasswordAndClearResetToken);
+
+            return "Password has been reset successfully";
+        } catch (error) {
+            return error.message;
+        }
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     registerUsersData,
     loginUsersData,
-    forgotPasswordData
+    forgotPasswordData,
+    resetPasswordData
 }
