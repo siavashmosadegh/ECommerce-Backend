@@ -4,7 +4,6 @@ INSERT INTO [dbo].[product]
         [Description],
         [SKU],
         [CategoryID],
-        [InventoryID],
         [Price],
         [DiscountID]
     )
@@ -13,7 +12,6 @@ VALUES (
     @Description,
     @SKU,
     @CategoryID,
-    @InventoryId,
     @Price,
     @DiscountID
 )

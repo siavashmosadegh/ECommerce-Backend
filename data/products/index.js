@@ -50,7 +50,6 @@ const createNewProduct = async (productData) => {
                                     .input('Description', NVarChar(100), productData.Description)
                                     .input('SKU', NVarChar(100), productData.SKU)
                                     .input('CategoryID', Int(), productData.CategoryID)
-                                    .input('InventoryID', Int(), productData.InventoryID)
                                     .input('Price', Int(), productData.Price)
                                     .input('DiscountID', Int(), productData.DiscountID)
                                     .query(sqlQueries.createproduct);

@@ -21,7 +21,7 @@ app.use(cors());
 // import all routes
 import productRoutes from './routes/productRoutes.js';
 import authenticationRoutes from './routes/authenticationRoutes.js';
-import authenticateToken from './middlewares/authenticateTokenV1.js';
+import {authenticateToken} from './middlewares/auth.js';
 
 app.use(bodyParser.json());
 app.use("/api/v1", productRoutes);

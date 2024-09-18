@@ -49,7 +49,8 @@ const registerUsersData = async (username, email, password) => {
             .input('username', NVarChar, username)
             .input('email', NVarChar, email)
             .input('passwordHash', NVarChar, hashedPassword)
-            .query('INSERT INTO Users (UserName, Email, PasswordHash) VALUES (@username, @email, @passwordHash)');
+            .input('role', NVarChar, "admin")
+            .query(sqlQueries.registerInsertUser);
 
         return "User registered Successfully";
     } catch (error) {
@@ -90,7 +91,7 @@ const loginUsersData = async (username, password) => {
             return "Invalid Credentials: This Combination of Username & Password is Incorrect";
         }
 
-        const token = sign({ id: user.id }, process.env.JWT_SECRET, {
+        const token = sign({ id: user.id , role: user.Role }, process.env.JWT_SECRET, {
             expiresIn: '1h'
         })
 
