@@ -6,7 +6,7 @@ import {loadSqlQueries} from '../utils.js';
 import pkg from 'mssql';
 import pkg2 from 'bcryptjs';
 import pkg3 from 'jsonwebtoken';
-const {connect,sql,NVarChar,DateTime} = pkg;
+const {connect,sql,NVarChar,DateTime,Int} = pkg;
 const {hash, compare, compareSync} = pkg2;
 const {sign} = pkg3;
 import { v4 as uuidv4 } from 'uuid';
@@ -91,7 +91,7 @@ const loginUsersData = async (username, password) => {
             return "Invalid Credentials: This Combination of Username & Password is Incorrect";
         }
 
-        const token = sign({ id: user.id , role: user.Role }, process.env.JWT_SECRET, {
+        const token = sign({ id: user.UserID , role: user.Role }, process.env.JWT_SECRET, {
             expiresIn: '1h'
         })
 
@@ -201,9 +201,40 @@ const resetPasswordData = async (token, newPassword) => {
     }
 }
 
+const getUserProfileData = async (userId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        console.log(userId);
+
+        const record = await pool.request()
+            .input("userId", Int, userId)
+            .query(sqlQueries.getUserViaUserID);
+        
+        console.log(record);
+
+        return record.recordset[0];
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     registerUsersData,
     loginUsersData,
     forgotPasswordData,
-    resetPasswordData
+    resetPasswordData,
+    getUserProfileData
 }

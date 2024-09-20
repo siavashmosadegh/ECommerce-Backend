@@ -2,10 +2,13 @@ import {
     registerUsersData,
     loginUsersData,
     forgotPasswordData,
-    resetPasswordData
+    resetPasswordData,
+    getUserProfileData
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
+import pkg3 from 'jsonwebtoken';
+const {verify} = pkg3;
 
 const registerUsers = catchAsyncErrors( async (req, res) => {
     const {username, email, password} = req.body;
@@ -76,9 +79,21 @@ const resetPassword = catchAsyncErrors( async (req, res) => {
     }
 })
 
+const getUserProfile = catchAsyncErrors( async (req, res) => {
+    
+    let result = await getUserProfileData(req.userId);
+
+    console.log(result);
+
+    res.status(200).json({
+        user: result
+    });
+})
+
 export {
     registerUsers,
     loginUsers,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    getUserProfile
 }

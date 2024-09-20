@@ -35,7 +35,26 @@ const authorizeRoles = (...roles) => {
     }
 }
 
+const extractIdFromToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    verify(token, process.env.JWT_SECRET, (err, decoded) => {
+
+        if (err) {
+            return err.message
+        }
+
+        console.log(decoded);
+
+        req.userId = decoded.id;
+
+        next();
+    })
+}
+
 export {
     authenticateToken,
-    authorizeRoles
+    authorizeRoles,
+    extractIdFromToken
 }
