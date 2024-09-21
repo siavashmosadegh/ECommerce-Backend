@@ -4,7 +4,8 @@ import {
     loginUsers,
     forgotPassword,
     resetPassword,
-    getUserProfile
+    getUserProfile,
+    updatePassword
 } from "../controllers/authenticationControllers.js";
 import {
     authenticateToken,
@@ -18,5 +19,6 @@ router.route("/login").post(loginUsers);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password").post(resetPassword);
 
-router.route("/user-profile").get( authenticateToken, extractIdFromToken, getUserProfile)
+router.route("/user-profile").get( authenticateToken, extractIdFromToken, getUserProfile);
+router.route("/update-password").post( authenticateToken, extractIdFromToken, updatePassword);
 export default router;

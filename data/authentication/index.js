@@ -231,10 +231,43 @@ const getUserProfileData = async (userId) => {
     }
 }
 
+const updatePasswordData = async (userId, newPassword) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        const hashedPassword = await hash(newPassword, 10);
+
+        try {
+            await pool.request() 
+                .input('userId', Int, userId)
+                .input('hashedPassword', NVarChar, hashedPassword)
+                .query(sqlQueries.updatePasswordWhenLoggedIn);
+
+            return ("Your Password was Updated Successfully");
+        } catch (error) {
+            return (error.message);
+        }
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     registerUsersData,
     loginUsersData,
     forgotPasswordData,
     resetPasswordData,
-    getUserProfileData
+    getUserProfileData,
+    updatePasswordData
 }

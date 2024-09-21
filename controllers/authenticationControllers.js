@@ -3,7 +3,8 @@ import {
     loginUsersData,
     forgotPasswordData,
     resetPasswordData,
-    getUserProfileData
+    getUserProfileData,
+    updatePasswordData
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -90,10 +91,25 @@ const getUserProfile = catchAsyncErrors( async (req, res) => {
     });
 })
 
+const updatePassword = catchAsyncErrors( async (req, res) => {
+
+    const userId = req.userId;
+    const {newPassword} = req.body;
+
+    let result = await updatePasswordData(userId, newPassword);
+
+    if (result === "Your Password was Updated Successfully") {
+        res.status(200).json({ message: "Your Password was Updated Successfully"})
+    } else {
+        res.json({ message: result });
+    }
+})
+
 export {
     registerUsers,
     loginUsers,
     forgotPassword,
     resetPassword,
-    getUserProfile
+    getUserProfile,
+    updatePassword
 }
