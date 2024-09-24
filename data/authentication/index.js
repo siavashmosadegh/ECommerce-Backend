@@ -291,6 +291,35 @@ const getAllUsersData = async () => {
     }
 }
 
+const getUserData = async (id) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        try {
+            const result = await pool.request()
+                .input('userId', Int, id)
+                .query(sqlQueries.getUserViaUserID);
+            return result.recordset[0];
+        } catch (error) {
+            return (error.message);
+        }
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     registerUsersData,
     loginUsersData,
@@ -298,5 +327,6 @@ export {
     resetPasswordData,
     getUserProfileData,
     updatePasswordData,
-    getAllUsersData
+    getAllUsersData,
+    getUserData
 }

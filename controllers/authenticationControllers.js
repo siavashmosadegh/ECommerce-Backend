@@ -5,7 +5,8 @@ import {
     resetPasswordData,
     getUserProfileData,
     updatePasswordData,
-    getAllUsersData
+    getAllUsersData,
+    getUserData
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -121,6 +122,23 @@ const getAllUsers = catchAsyncErrors( async (req, res) => {
     }
 })
 
+const getUser = catchAsyncErrors( async (req, res) => {
+
+    const id = req.params.id;
+
+    let result = await getUserData(id);
+
+    if (result === null || result === undefined) {
+        res.json({
+            message: "There was no user with the provided user id !!"
+        })
+    } else {
+        res.json({
+            user: result
+        })
+    }
+})
+
 export {
     registerUsers,
     loginUsers,
@@ -128,5 +146,6 @@ export {
     resetPassword,
     getUserProfile,
     updatePassword,
-    getAllUsers
+    getAllUsers,
+    getUser
 }
