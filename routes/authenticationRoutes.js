@@ -5,10 +5,12 @@ import {
     forgotPassword,
     resetPassword,
     getUserProfile,
-    updatePassword
+    updatePassword,
+    getAllUsers
 } from "../controllers/authenticationControllers.js";
 import {
     authenticateToken,
+    authorizeRoles,
     extractIdFromToken
 } from '../middlewares/auth.js';
 
@@ -21,4 +23,6 @@ router.route("/reset-password").post(resetPassword);
 
 router.route("/user-profile").get( authenticateToken, extractIdFromToken, getUserProfile);
 router.route("/update-password").post( authenticateToken, extractIdFromToken, updatePassword);
+
+router.route("/get-all-users").get(authenticateToken, authorizeRoles("admin"), getAllUsers);
 export default router;
