@@ -6,7 +6,8 @@ import {
     getUserProfileData,
     updatePasswordData,
     getAllUsersData,
-    getUserData
+    getUserData,
+    deleteUserData
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -139,6 +140,32 @@ const getUser = catchAsyncErrors( async (req, res) => {
     }
 })
 
+const deleteUser = catchAsyncErrors( async (req, res) => {
+
+    const id = req.params.id;
+
+    const result = await deleteUserData(id);
+
+    if (result === "User Deleted Successfully !!!") {
+        res.status(200).json({
+            message: "User Deleted Successfully !!!"
+        });
+    } else if (result === "User Does Not Exist") {
+        res.status(401).json({
+            message: "User Does Not Exist"
+        })
+    } else {
+        res.json({
+            message: "There Was a Problem Deleting the User"
+        });
+    }
+    
+
+    res.json({
+        result: result
+    })
+})
+
 export {
     registerUsers,
     loginUsers,
@@ -147,5 +174,6 @@ export {
     getUserProfile,
     updatePassword,
     getAllUsers,
-    getUser
+    getUser,
+    deleteUser
 }

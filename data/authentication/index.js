@@ -320,6 +320,45 @@ const getUserData = async (id) => {
     }
 }
 
+const deleteUserData = async (id) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        //check if user DOES NOT exist
+        const existingUser = await pool.request()
+            .input('id', Int, id)
+            .query(sqlQueries.checkUserExistanceViaUserID);
+
+        if (existingUser.recordset.length === 0 ) {
+            return "User Does Not Exist";
+        }
+
+        try {
+            await pool.request()
+                .input('id', Int, id)
+                .query(sqlQueries.deleteUser);
+
+            return ("User Deleted Successfully !!!");
+        } catch (error) {
+            return (error.message);
+        }
+    } catch (error) {
+        return error.message;
+    }
+
+}
+
 export {
     registerUsersData,
     loginUsersData,
@@ -328,5 +367,6 @@ export {
     getUserProfileData,
     updatePasswordData,
     getAllUsersData,
-    getUserData
+    getUserData,
+    deleteUserData
 }
