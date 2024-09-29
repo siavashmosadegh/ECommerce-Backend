@@ -7,7 +7,8 @@ import {
     updatePasswordData,
     getAllUsersData,
     getUserData,
-    deleteUserData
+    deleteUserData,
+    updateUserData
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -36,8 +37,6 @@ const loginUsers = catchAsyncErrors( async (req,res) => {
     const {username , password} = req.body;
 
     let result = await loginUsersData(username, password);
-
-    console.log(result);
 
     //check if user exists
     if (result === "Login Failed: User Does Not Exist") {
@@ -166,6 +165,25 @@ const deleteUser = catchAsyncErrors( async (req, res) => {
     })
 })
 
+const updateUser = catchAsyncErrors( async (req, res) => {
+
+    const id = req.params.id;
+
+    const updates = req.body;
+
+    const result = await updateUserData(id, updates);
+
+    if (result === "Successful") {
+        res.status(200).json({
+            message: "successful"
+        })
+    } else {
+        res.json({
+            message: result
+        })
+    }
+})
+
 export {
     registerUsers,
     loginUsers,
@@ -175,5 +193,6 @@ export {
     updatePassword,
     getAllUsers,
     getUser,
-    deleteUser
+    deleteUser,
+    updateUser
 }

@@ -6,7 +6,7 @@ import {loadSqlQueries} from '../utils.js';
 import pkg from 'mssql';
 import pkg2 from 'bcryptjs';
 import pkg3 from 'jsonwebtoken';
-const {connect,sql,NVarChar,DateTime,Int} = pkg;
+const {connect,sql,NVarChar,DateTime,Int,Request} = pkg;
 const {hash, compare, compareSync} = pkg2;
 const {sign} = pkg3;
 import { v4 as uuidv4 } from 'uuid';
@@ -359,6 +359,68 @@ const deleteUserData = async (id) => {
 
 }
 
+const updateUserData = async (id, updates) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        // Dynamically construct the SQL query 
+
+        let updateFields = [];
+        let sqlParams = [];
+        let paramIndex = 1;
+
+        console.log(updates);
+
+        for (const [key, value] of Object.entries(updates)) {
+            updateFields.push(`${key} = @param${paramIndex}`);
+            sqlParams.push({ name: `param${paramIndex}`, value});
+            paramIndex++;
+        }
+
+        console.log(updateFields.join(", "));
+        console.log(sqlParams);
+
+        if (updateFields.length === 0) {
+            return "No Fields Provided For Update";
+        }
+
+        const updateQuery = `
+            UPDATE Users
+            SET ${updateFields.join(', ')}
+            WHERE UserID = @id
+        `;
+
+        const request = new Request();
+        request.input('id', Int, id);
+        sqlParams.forEach((param) => {
+            request.input(param.name, param.value);
+        });
+
+        try {
+            await request.query(updateQuery);
+
+            return "User Updated Successfully"
+        } catch( error) {
+            return error.message;
+        }
+
+        
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     registerUsersData,
     loginUsersData,
@@ -368,5 +430,6 @@ export {
     updatePasswordData,
     getAllUsersData,
     getUserData,
-    deleteUserData
+    deleteUserData,
+    updateUserData
 }
