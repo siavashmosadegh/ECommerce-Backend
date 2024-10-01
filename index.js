@@ -21,11 +21,13 @@ app.use(cors());
 // import all routes
 import productRoutes from './routes/productRoutes.js';
 import authenticationRoutes from './routes/authenticationRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 import {authenticateToken} from './middlewares/auth.js';
 
 app.use(bodyParser.json());
 app.use("/api/v1", productRoutes);
-app.use("/api/v1",authenticationRoutes);
+app.use("/api/v1", authenticationRoutes);
+app.use("/api/v1", orderRoutes);
 app.get('/api/v1/protecteed', authenticateToken, (req, res) => {
     res.json({ user: req.user });
 });
