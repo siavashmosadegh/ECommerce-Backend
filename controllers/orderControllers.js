@@ -8,6 +8,16 @@ const placeNewOrder = catchAsyncErrors( async (req, res) => {
 
     const result = await placeNewOrderData(id , data);
 
+    if (result === "Order Placed Successfully") {
+        res.status(200).json({
+            message: "Order Placed Successfully"
+        })
+    } else {
+        res.json({
+            message: "There was a problem placing the order"
+        })
+    }
+
     res.json({
         result
     });

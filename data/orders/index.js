@@ -6,7 +6,8 @@ const {
     connect,
     NVarChar,
     Int,
-    Decimal
+    Decimal,
+    UniqueIdentifier
 } = pkg;
 
 const placeNewOrderData = async (id, data) => {
@@ -24,6 +25,7 @@ const placeNewOrderData = async (id, data) => {
 
         const sqlQueries = await loadSqlQueries('orders');
 
+        // insert into orders table
         const result  = await pool.request()
             .input('UserID', Int, id)
             .input('totalPrice', Decimal(10,2), data.totalPrice)
@@ -32,6 +34,21 @@ const placeNewOrderData = async (id, data) => {
             .query(sqlQueries.insertIntoOrders);
 
         const orderId = result.recordset[0].OrderId;
+
+        // insert into OrderItems table
+        const items = data.items;
+
+        for (const item of items) {
+            await pool.request()
+                .input('OrderId', UniqueIdentifier, orderId)
+                .input('ProductId', Int, item.productId)
+                .input('Quantity', Int, item.quantity)
+                .input('Price', Decimal(10,2), item.price)
+                .query(sqlQueries.insertIntoOrderItems)
+        }
+
+        return "Order Placed Successfully"
+
     } catch (error) {
         return error.message;
     }
