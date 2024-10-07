@@ -2,7 +2,8 @@ import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import {
     placeNewOrderData,
     getOrderDetailsData,
-    updateOrderStatusData
+    updateOrderStatusData,
+    getAllOrdersOfOneUserData
 } from "../data/orders/index.js";
 
 const placeNewOrder = catchAsyncErrors( async (req, res) => {
@@ -65,8 +66,20 @@ const updateOrderStatus = catchAsyncErrors( async (req, res) => {
     }
 })
 
+const getAllOrdersOfOneUser = catchAsyncErrors( async (req, res) => {
+
+    const userId = req.params.userId;
+
+    const result = await getAllOrdersOfOneUserData(userId);
+
+    res.json({
+        result
+    })
+})
+
 export {
     placeNewOrder,
     getOrderDetails,
-    updateOrderStatus
+    updateOrderStatus,
+    getAllOrdersOfOneUser
 }

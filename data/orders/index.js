@@ -130,8 +130,47 @@ const updateOrderStatusData = async (orderId, status) => {
     }
 }
 
+const getAllOrdersOfOneUserData = async (userId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const authSqlQueries = await loadSqlQueries('authentication');
+        const orderSqlQueries = await loadSqlQueries('orders');
+
+        const existingUser = await pool.request()
+            .input('id', Int, userId)
+            .query(authSqlQueries.checkUserExistanceViaUserID);
+
+        if (existingUser.recordset.length === 0 ) {
+            return "User Does Not Exist";
+        }
+
+        const orders = await pool.request()
+            .input('userId', Int , userId)
+            .query(orderSqlQueries.getAllOrdersOfOneUserViaUserID);
+
+        if (orders.recordset.length === 0) {
+            return "This User Hasn't Placed Any Order Yet"
+        }
+
+        return orders.recordset;
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     placeNewOrderData,
     getOrderDetailsData,
-    updateOrderStatusData
+    updateOrderStatusData,
+    getAllOrdersOfOneUserData
 }
