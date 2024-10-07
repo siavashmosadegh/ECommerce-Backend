@@ -5,11 +5,13 @@ import {
 } from '../middlewares/auth.js';
 
 import {
-    placeNewOrder
+    placeNewOrder,
+    getOrderDetails
 } from '../controllers/orderControllers.js';
 
 const router = express.Router();
 
 router.route("/place-new-order").post( authenticateToken, extractIdFromToken ,placeNewOrder);
+router.route("/get-order-details/:orderId").get( authenticateToken, getOrderDetails);
 
 export default router;
