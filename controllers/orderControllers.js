@@ -1,7 +1,8 @@
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import {
     placeNewOrderData,
-    getOrderDetailsData
+    getOrderDetailsData,
+    updateOrderStatusData
 } from "../data/orders/index.js";
 
 const placeNewOrder = catchAsyncErrors( async (req, res) => {
@@ -43,7 +44,29 @@ const getOrderDetails = catchAsyncErrors( async (req, res) => {
     }
 })
 
+const updateOrderStatus = catchAsyncErrors( async (req, res) => {
+
+    const orderId = req.params.orderId;
+
+    const {status} = req.body;
+
+    console.log(orderId);
+
+    const result = await updateOrderStatusData(orderId, status);
+
+    if (result === "Order Does Not Exist") {
+        res.json({
+            message: "Order Does Not Exist"
+        })
+    } else if (result === "Order Status Updated Successfully") {
+        res.json({
+            message: "Order Status Updated Successfully"
+        })
+    }
+})
+
 export {
     placeNewOrder,
-    getOrderDetails
+    getOrderDetails,
+    updateOrderStatus
 }

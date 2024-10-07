@@ -95,7 +95,43 @@ const getOrderDetailsData = async (orderId) => {
 
 }
 
+const updateOrderStatusData = async (orderId, status) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('orders');
+
+        const existingOrder = await pool.request()
+            .input('OrderId', NVarChar, orderId)
+            .query(sqlQueries.checkOrderExistanceViaOrderID);
+
+        if (existingOrder.recordset.length === 0 ) {
+            return "Order Does Not Exist";
+        }
+
+        await pool.request()
+            .input('OrderId', UniqueIdentifier, orderId)
+            .input('Status', NVarChar(50), status)
+            .query(sqlQueries.updateOrderStatus);
+
+        return "Order Status Updated Successfully"
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     placeNewOrderData,
-    getOrderDetailsData
+    getOrderDetailsData,
+    updateOrderStatusData
 }
