@@ -168,9 +168,47 @@ const getAllOrdersOfOneUserData = async (userId) => {
     }
 }
 
+const deleteOneOrderData = async (orderId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('orders');
+
+        const existingOrder = await pool.request()
+            .input('OrderId', NVarChar, orderId)
+            .query(sqlQueries.checkOrderExistanceViaOrderID);
+
+        if (existingOrder.recordset.length === 0 ) {
+            return "Order Does Not Exist";
+        }
+
+        await pool.request()
+            .input('OrderId', NVarChar, orderId)
+            .query(sqlQueries.deleteOrderOrdersTableViaOrderID);
+
+        await pool.request()
+            .input('OrderId', NVarChar, orderId)
+            .query(sqlQueries.deleteOrderItemsViaOrderID);
+
+        return "Order Deleted Successfully";
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     placeNewOrderData,
     getOrderDetailsData,
     updateOrderStatusData,
-    getAllOrdersOfOneUserData
+    getAllOrdersOfOneUserData,
+    deleteOneOrderData
 }

@@ -3,7 +3,8 @@ import {
     placeNewOrderData,
     getOrderDetailsData,
     updateOrderStatusData,
-    getAllOrdersOfOneUserData
+    getAllOrdersOfOneUserData,
+    deleteOneOrderData
 } from "../data/orders/index.js";
 
 const placeNewOrder = catchAsyncErrors( async (req, res) => {
@@ -75,11 +76,23 @@ const getAllOrdersOfOneUser = catchAsyncErrors( async (req, res) => {
     res.json({
         result
     })
+});
+
+const deleteOneOrder = catchAsyncErrors( async (req, res) => {
+
+    const orderId = req.params.orderId;
+
+    const result = await deleteOneOrderData(orderId);
+
+    res.json({
+        result
+    })
 })
 
 export {
     placeNewOrder,
     getOrderDetails,
     updateOrderStatus,
-    getAllOrdersOfOneUser
+    getAllOrdersOfOneUser,
+    deleteOneOrder
 }
