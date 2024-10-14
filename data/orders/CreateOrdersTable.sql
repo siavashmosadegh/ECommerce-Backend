@@ -1,0 +1,10 @@
+use mydatabase;
+
+CREATE TABLE Orders (
+    OrderId UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserID INT FOREIGN KEY REFERENCES Users(UserID),
+    TotalPrice DECIMAL(10,2),
+    ShippingAddress NVARCHAR(255),
+    Status NVARCHAR(50),
+    CreatedAt DATETIME DEFAULT GETDATE()
+)
