@@ -133,10 +133,46 @@ const deleteProductById = async (productId) => {
     }
 }
 
+const getReviewsOfOneProductData = async (productId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+        
+        const sqlQueries = await loadSqlQueries('products');
+
+        const existingProduct = await pool.request()
+            .input('productId', Int, productId)
+            .query(sqlQueries.checkProductExistance);
+
+        if (existingProduct.recordset.length === 0 ) {
+            console.log("This Product Does Not Exist");
+            return "This Product Does Not Exist";
+        }
+
+        const result = await pool.request()
+                                .input('productId', Int(), productId)
+                                .query(sqlQueries.getReviewsOfOneProduct);
+
+        return result.recordset;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     getProductsData,
     createNewProduct,
     getProductById,
     updateProductById,
-    deleteProductById
+    deleteProductById,
+    getReviewsOfOneProductData
 }

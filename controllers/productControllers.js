@@ -3,7 +3,8 @@ import {
     createNewProduct,
     getProductById,
     updateProductById,
-    deleteProductById
+    deleteProductById,
+    getReviewsOfOneProductData
 } from "../data/products/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -77,10 +78,21 @@ const deleteProduct = catchAsyncErrors( async (req, res) => {
     })
 })
 
+const getReviewsOfOneProduct = catchAsyncErrors( async (req, res) => {
+    const { productId } = req.params;
+
+    const result = await getReviewsOfOneProductData( productId );
+
+    res.json({
+        result
+    });
+})
+
 export {
     getProducts,
     createProducts,
     getProductDetails,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getReviewsOfOneProduct
 }
