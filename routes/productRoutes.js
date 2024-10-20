@@ -5,7 +5,8 @@ import {
     getProductDetails,
     updateProduct,
     deleteProduct,
-    getReviewsOfOneProduct
+    getReviewsOfOneProduct,
+    addNewCategory
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -22,4 +23,5 @@ router.route("/admin/products/:id").delete(authenticateToken, authorizeRoles("ad
 
 router.route("/products/:productId/reviews").get( getReviewsOfOneProduct )
 
+router.route("/admin/products/add-new-category").post( authenticateToken, authorizeRoles("admin"), addNewCategory);
 export default router;

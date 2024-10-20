@@ -168,11 +168,38 @@ const getReviewsOfOneProductData = async (productId) => {
     }
 }
 
+const addNewCategoryData = async (data) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+        
+        const sqlQueries = await loadSqlQueries('products');
+
+        const insertCategory = await pool.request()
+            .input('CategoryName', NVarChar(100), data.CategoryName)
+            .input('Description', NVarChar(255), data.Description)
+            .query(sqlQueries.CreateCategory);
+
+        return insertCategory.recordset;
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     getProductsData,
     createNewProduct,
     getProductById,
     updateProductById,
     deleteProductById,
-    getReviewsOfOneProductData
+    getReviewsOfOneProductData,
+    addNewCategoryData
 }

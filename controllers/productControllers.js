@@ -4,7 +4,8 @@ import {
     getProductById,
     updateProductById,
     deleteProductById,
-    getReviewsOfOneProductData
+    getReviewsOfOneProductData,
+    addNewCategoryData
 } from "../data/products/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -88,11 +89,26 @@ const getReviewsOfOneProduct = catchAsyncErrors( async (req, res) => {
     });
 })
 
+const addNewCategory = catchAsyncErrors( async (req, res) => {
+    try {
+        const data = req.body;
+        const createdCategory = await addNewCategoryData(data);
+        res.json({
+            createdCategory
+        });
+    } catch (error) {
+        res.json({
+            error
+        });
+    }
+})
+
 export {
     getProducts,
     createProducts,
     getProductDetails,
     updateProduct,
     deleteProduct,
-    getReviewsOfOneProduct
+    getReviewsOfOneProduct,
+    addNewCategory
 }
