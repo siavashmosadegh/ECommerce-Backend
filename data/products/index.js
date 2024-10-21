@@ -194,6 +194,35 @@ const addNewCategoryData = async (data) => {
     }
 }
 
+const getCategoryData = async (CategoryID) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+        
+        const sqlQueries = await loadSqlQueries('products');
+
+        const category = await pool.request()
+            .input('CategoryID', Int, CategoryID)
+            .query(sqlQueries.getCategoryByCategoryID);
+
+        if (category.recordset.length === 0 ) {
+            return "There is no category with the provided id";
+        }
+
+        return category.recordset;
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     getProductsData,
     createNewProduct,
@@ -201,5 +230,6 @@ export {
     updateProductById,
     deleteProductById,
     getReviewsOfOneProductData,
-    addNewCategoryData
+    addNewCategoryData,
+    getCategoryData
 }
