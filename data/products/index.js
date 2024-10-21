@@ -186,6 +186,7 @@ const addNewCategoryData = async (data) => {
         const insertCategory = await pool.request()
             .input('CategoryName', NVarChar(100), data.CategoryName)
             .input('Description', NVarChar(255), data.Description)
+            .input('FarsiCategoryName', NVarChar(100), data.FarsiCategoryName)
             .query(sqlQueries.CreateCategory);
 
         return insertCategory.recordset;

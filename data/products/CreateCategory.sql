@@ -1,9 +1,11 @@
 INSERT INTO [dbo].[Category]
     (
         [CategoryName],
-        [Description]
+        [Description],
+        [FarsiCategoryName]
     )
 VALUES (
     @CategoryName,
-    @Description
+    @Description,
+    @FarsiCategoryName
 )
