@@ -7,7 +7,8 @@ import {
     deleteProduct,
     getReviewsOfOneProduct,
     addNewCategory,
-    getCategory
+    getCategory,
+    getAllCategories
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -15,6 +16,8 @@ import {
 } from '../middlewares/auth.js';
 
 const router = express.Router();
+
+router.route("/products/get-all-categories").get( getAllCategories )
 
 router.route("/products").get(getProducts);
 router.route("/admin/products").post( authenticateToken, authorizeRoles("admin") ,createProducts);
@@ -26,4 +29,6 @@ router.route("/products/:productId/reviews").get( getReviewsOfOneProduct )
 
 router.route("/admin/products/add-new-category").post( authenticateToken, authorizeRoles("admin"), addNewCategory);
 router.route("/admin/products/get-category/:id").get( authenticateToken, authorizeRoles("admin"), getCategory);
+
+
 export default router;
