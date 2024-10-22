@@ -7,7 +7,8 @@ import {
     getReviewsOfOneProductData,
     addNewCategoryData,
     getCategoryData,
-    getAllCategoriesData
+    getAllCategoriesData,
+    getProductByCategoryIDData
 } from "../data/products/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -121,8 +122,21 @@ const getCategory = catchAsyncErrors( async (req, res) => {
 
 const getAllCategories = catchAsyncErrors( async (req, res) => {
     try {
-        
         const result = await getAllCategoriesData();
+
+        res.json({
+            result
+        })
+    } catch (error) {
+        return error.message;
+    }
+})
+
+const getProductByCategoryID = catchAsyncErrors ( async (req, res) => {
+    try {
+        const categoryID = req.params.id;;
+
+        const result = await getProductByCategoryIDData (categoryID);
 
         res.json({
             result
@@ -141,5 +155,6 @@ export {
     getReviewsOfOneProduct,
     addNewCategory,
     getCategory,
-    getAllCategories
+    getAllCategories,
+    getProductByCategoryID
 }

@@ -8,7 +8,8 @@ import {
     getReviewsOfOneProduct,
     addNewCategory,
     getCategory,
-    getAllCategories
+    getAllCategories,
+    getProductByCategoryID
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -29,6 +30,8 @@ router.route("/products/:productId/reviews").get( getReviewsOfOneProduct )
 
 router.route("/admin/products/add-new-category").post( authenticateToken, authorizeRoles("admin"), addNewCategory);
 router.route("/admin/products/get-category/:id").get( authenticateToken, authorizeRoles("admin"), getCategory);
+
+router.route("/products/category/:id").get( getProductByCategoryID )
 
 
 export default router;
