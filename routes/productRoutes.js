@@ -9,7 +9,8 @@ import {
     addNewCategory,
     getCategory,
     getAllCategories,
-    getProductByCategoryID
+    getProductByCategoryID,
+    getAllCarBrands
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -19,6 +20,7 @@ import {
 const router = express.Router();
 
 router.route("/products/get-all-categories").get( getAllCategories )
+router.route("/products/get-all-car-brands").get( getAllCarBrands )
 
 router.route("/products").get(getProducts);
 router.route("/admin/products").post( authenticateToken, authorizeRoles("admin") ,createProducts);

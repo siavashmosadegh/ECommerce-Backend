@@ -8,7 +8,8 @@ import {
     addNewCategoryData,
     getCategoryData,
     getAllCategoriesData,
-    getProductByCategoryIDData
+    getProductByCategoryIDData,
+    getAllCarBrandsData
 } from "../data/products/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -146,6 +147,19 @@ const getProductByCategoryID = catchAsyncErrors ( async (req, res) => {
     }
 })
 
+const getAllCarBrands = catchAsyncErrors ( async (req, res) => {
+    try {
+
+        const result = await getAllCarBrandsData ();
+
+        res.json({
+            result
+        })
+    } catch (error) {
+        return error.message;
+    }
+})
+
 export {
     getProducts,
     createProducts,
@@ -156,5 +170,6 @@ export {
     addNewCategory,
     getCategory,
     getAllCategories,
-    getProductByCategoryID
+    getProductByCategoryID,
+    getAllCarBrands
 }
