@@ -328,6 +328,35 @@ const addNewCarBrandData = async (data) => {
     }
 }
 
+const getCarBrandByCarBrandIDData = async (brandID) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('products');
+
+        const result = await pool.request()
+            .input('brandID', Int, brandID)
+            .query(sqlQueries.getCarBrandByCarBrandID);
+
+        if (result.recordset.length === 0 ) {
+            return "There is no car brand with the provided id";
+        }
+
+        return result.recordset;
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     getProductsData,
     createNewProduct,
@@ -340,5 +369,6 @@ export {
     getAllCategoriesData,
     getProductByCategoryIDData,
     getAllCarBrandsData,
-    addNewCarBrandData
+    addNewCarBrandData,
+    getCarBrandByCarBrandIDData
 }
