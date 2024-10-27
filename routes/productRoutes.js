@@ -32,7 +32,7 @@ router.route("/admin/products/:id").delete(authenticateToken, authorizeRoles("ad
 router.route("/products/:productId/reviews").get( getReviewsOfOneProduct )
 
 router.route("/admin/products/add-new-category").post( authenticateToken, authorizeRoles("admin"), addNewCategory);
-router.route("/admin/products/get-category/:id").get( authenticateToken, authorizeRoles("admin"), getCategory);
+router.route("/products/get-category/:id").get( authenticateToken, authorizeRoles("admin"), getCategory);
 
 router.route("/admin/products/add-new-car-brand").post( authenticateToken, authorizeRoles("admin"), addNewCarBrand )
 
