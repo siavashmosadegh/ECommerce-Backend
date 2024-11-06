@@ -3,7 +3,7 @@
 import {loadSqlQueries} from '../utils.js';
 //import {sqlconfig} from '../../config.js';
 import pkg from 'mssql';
-const {connect,sql,NVarChar,Int} = pkg;
+const {connect,sql,NVarChar,Int,Request} = pkg;
 
 const getProductsData = async (search) => {
     try {
@@ -415,6 +415,104 @@ const getProductTypeByCategoryIDData = async (categoryID) => {
     }
 }
 
+const createNewCarData = async ( data ) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        // const sqlQueries = await loadSqlQueries('products');
+
+        const {
+            CarBrandID,
+            CarModel,
+            CarModelFarsi,
+            TrimLevel,
+            TrimLevelFarsi,
+            SubTrimLevel,
+            SubTrimLevelFarsi,
+            Year
+        } = data;
+
+        console.log(data);
+
+        console.log(SubTrimLevel);
+
+        let query = `INSERT INTO Car (CarBrandID, CarModel, CarModelFarsi`;
+        let values = ` VALUES (@CarBrandID, @CarModel, @CarModelFarsi`;
+
+        if (TrimLevel) {
+            query += `, TrimLevel`;
+            values += `, @TrimLevel`
+        }
+
+        if (TrimLevelFarsi) {
+            query += `, TrimLevelFarsi`;
+            values += `, @TrimLevelFarsi`;
+        }
+
+        if (SubTrimLevel) {
+            query += `, SubTrimLevel`;
+            values += `, @SubTrimLevel`;
+        }
+
+        if (SubTrimLevelFarsi) {
+            query += `, SubTrimLevelFarsi`;
+            values += `, @SubTrimLevelFarsi`;
+        }
+
+        if (Year) {
+            query += `, Year`;
+            values += `, @Year`;
+        }
+
+        query += `)`;
+        values += `)`;
+
+        const finalQuery = query + values;
+
+        const request = new Request;
+
+        request.input('CarBrandID', Int, CarBrandID);
+        request.input('CarModel', NVarChar(50), CarModel);
+        request.input('CarModelFarsi', NVarChar(50), CarModelFarsi);
+
+        if (TrimLevel) {
+            request.input('TrimLevel', NVarChar(50), TrimLevel);
+        }
+
+        if (TrimLevelFarsi) {
+            request.input('TrimLevelFarsi', NVarChar(50), TrimLevelFarsi);
+        }
+
+        if (SubTrimLevel) {
+            request.input('SubTrimLevel', NVarChar(50), SubTrimLevel);
+        }
+
+        if (SubTrimLevelFarsi) {
+            request.input('SubTrimLevelFarsi', NVarChar(50), SubTrimLevelFarsi);
+        }
+
+        if (Year) {
+            request.input('Year', Int, Year);
+        }
+
+        console.log(query);
+
+        await request.query(finalQuery);
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     getProductsData,
     createNewProduct,
@@ -430,5 +528,6 @@ export {
     addNewCarBrandData,
     getCarBrandByCarBrandIDData,
     addNewProductTypeData,
-    getProductTypeByCategoryIDData
+    getProductTypeByCategoryIDData,
+    createNewCarData
 }
