@@ -18,7 +18,7 @@ const {
 
 const sqlEncrypt = process.env.ENCRYPT === "true";
 
-assert(PORT, 'Port is required');
+assert(PORT, 'Port is requiredd');
 assert(HOST, 'HOST is required');
 
 const sqlconfig = () => {
