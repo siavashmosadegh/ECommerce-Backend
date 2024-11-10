@@ -1,0 +1,20 @@
+CREATE TABLE [dbo].[Users] (
+    [UserID]             INT            IDENTITY (1, 1) NOT NULL,
+    [UserName]           NVARCHAR (100) NOT NULL,
+    [Email]              NVARCHAR (255) NOT NULL,
+    [PasswordHash]       NVARCHAR (255) NOT NULL,
+    [FirstName]          NVARCHAR (100) NULL,
+    [PhoneNumber]        NVARCHAR (20)  NULL,
+    [AddressLine1]       NVARCHAR (255) NULL,
+    [AddressLine2]       NVARCHAR (255) NULL,
+    [City]               NVARCHAR (100) NULL,
+    [State]              NVARCHAR (100) NULL,
+    [ZipCode]            NVARCHAR (20)  NULL,
+    [Country]            NVARCHAR (100) NULL,
+    [CreatedAt]          DATETIME       NULL,
+    [UpdatedAt]          DATETIME       NULL,
+    [reset_token]        NVARCHAR (255) NULL,
+    [reset_token_expiry] DATETIME       NULL,
+    [Role]               NVARCHAR (255) NULL,
+    PRIMARY KEY CLUSTERED ([UserID] ASC)
+);
