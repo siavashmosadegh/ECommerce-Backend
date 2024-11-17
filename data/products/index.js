@@ -542,6 +542,33 @@ const getCarByCarBrandIDData = async ( carBrandID ) => {
     }
 }
 
+const createNewProductTypeBrandData = async ( data ) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('products');
+
+        const result = await pool.request()
+            .input('ProductTypeID', Int, data.ProductTypeID)
+            .input('ProductTypeBrandName', NVarChar(50), data.ProductTypeBrandName)
+            .input('ProductTypeBrandNameFarsi', NVarChar(50), data.ProductTypeBrandNameFarsi)
+            .query(sqlQueries.CreateNewProductTypeBrand);
+
+        return result.recordset;
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     getProductsData,
     createNewProduct,
@@ -559,5 +586,6 @@ export {
     addNewProductTypeData,
     getProductTypeByCategoryIDData,
     createNewCarData,
-    getCarByCarBrandIDData
+    getCarByCarBrandIDData,
+    createNewProductTypeBrandData
 }
