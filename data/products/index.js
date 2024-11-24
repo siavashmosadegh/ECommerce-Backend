@@ -569,6 +569,35 @@ const createNewProductTypeBrandData = async ( data ) => {
     }
 }
 
+const getAllProductTypeBrandsData = async (data) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('products');
+
+        const result = await pool.request()
+            .query(sqlQueries.getAllProductTypeBrands);
+
+        if (result.recordset.length === 0 ) {
+            return "There is no product type brand registered";
+        }
+
+        return result.recordset
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     getProductsData,
     createNewProduct,
@@ -587,5 +616,6 @@ export {
     getProductTypeByCategoryIDData,
     createNewCarData,
     getCarByCarBrandIDData,
-    createNewProductTypeBrandData
+    createNewProductTypeBrandData,
+    getAllProductTypeBrandsData
 }
