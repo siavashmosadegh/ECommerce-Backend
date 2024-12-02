@@ -18,7 +18,8 @@ import {
     createNewCar,
     getCarByCarBrandID,
     createNewProductTypeBrand,
-    getAllProductTypeBrands
+    getAllProductTypeBrands,
+    getProductFeaturesByProductID
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -54,6 +55,8 @@ router.route("/car/get-car-by-car-brand-id/:id").get( getCarByCarBrandID );
 
 router.route("/admin/product-type-brand/create-new-brand").post( authenticateToken, authorizeRoles("admin"), createNewProductTypeBrand );
 router.route("/product-type-brand/get-all").get( getAllProductTypeBrands );
+
+router.route("/product-features/:id").get( getProductFeaturesByProductID );
 
 
 export default router;

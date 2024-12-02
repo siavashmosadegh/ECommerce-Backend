@@ -598,6 +598,37 @@ const getAllProductTypeBrandsData = async (data) => {
     }
 }
 
+const getProductFeaturesByProductIDData = async (productID) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('products');
+
+        const result = await pool.request()
+            .input('productID', Int, productID)
+            .query(sqlQueries.getProductFeaturesByProductID);
+
+        console.log(result);
+
+        if (result.recordset.length === 0 ) {
+            return "There are not any product features with the provided product id";
+        }
+
+        return result.recordset;
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     getProductsData,
     createNewProduct,
@@ -617,5 +648,6 @@ export {
     createNewCarData,
     getCarByCarBrandIDData,
     createNewProductTypeBrandData,
-    getAllProductTypeBrandsData
+    getAllProductTypeBrandsData,
+    getProductFeaturesByProductIDData
 }

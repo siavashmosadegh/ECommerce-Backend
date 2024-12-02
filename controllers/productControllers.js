@@ -17,7 +17,8 @@ import {
     createNewCarData,
     getCarByCarBrandIDData,
     createNewProductTypeBrandData,
-    getAllProductTypeBrandsData
+    getAllProductTypeBrandsData,
+    getProductFeaturesByProductIDData
 } from "../data/products/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -282,6 +283,20 @@ const getAllProductTypeBrands = catchAsyncErrors (async (req, res) => {
     }
 })
 
+const getProductFeaturesByProductID = catchAsyncErrors( async(req, res) => {
+    try {
+        const productID = req.params.id;
+
+        const result = await getProductFeaturesByProductIDData(productID);
+
+        res.json({
+            result
+        })
+    } catch (error) {
+        return error.message;
+    }
+})
+
 export {
     getProducts,
     createProducts,
@@ -301,5 +316,6 @@ export {
     createNewCar,
     getCarByCarBrandID,
     createNewProductTypeBrand,
-    getAllProductTypeBrands
+    getAllProductTypeBrands,
+    getProductFeaturesByProductID
 }
