@@ -432,6 +432,8 @@ const createNewCarData = async ( data ) => {
 
         const {
             CarBrandID,
+            CarName,
+            CarNameFarsi,
             CarModel,
             CarModelFarsi,
             TrimLevel,
@@ -445,8 +447,8 @@ const createNewCarData = async ( data ) => {
 
         console.log(SubTrimLevel);
 
-        let query = `INSERT INTO Car (CarBrandID, CarModel, CarModelFarsi`;
-        let values = ` VALUES (@CarBrandID, @CarModel, @CarModelFarsi`;
+        let query = `INSERT INTO Car (CarBrandID, CarModel, CarModelFarsi, CarName, CarNameFarsi`;
+        let values = ` VALUES (@CarBrandID, @CarModel, @CarModelFarsi, @CarName, @CarNameFarsi`;
 
         if (TrimLevel) {
             query += `, TrimLevel`;
@@ -483,6 +485,8 @@ const createNewCarData = async ( data ) => {
         request.input('CarBrandID', Int, CarBrandID);
         request.input('CarModel', NVarChar(50), CarModel);
         request.input('CarModelFarsi', NVarChar(50), CarModelFarsi);
+        request.input('CarName', NVarChar(50), CarName);
+        request.input('CarNameFarsi', NVarChar(50), CarNameFarsi);
 
         if (TrimLevel) {
             request.input('TrimLevel', NVarChar(50), TrimLevel);
