@@ -562,7 +562,6 @@ const createNewProductTypeBrandData = async ( data ) => {
         const sqlQueries = await loadSqlQueries('products');
 
         const result = await pool.request()
-            .input('ProductTypeID', Int, data.ProductTypeID)
             .input('ProductTypeBrandName', NVarChar(50), data.ProductTypeBrandName)
             .input('ProductTypeBrandNameFarsi', NVarChar(50), data.ProductTypeBrandNameFarsi)
             .query(sqlQueries.CreateNewProductTypeBrand);
