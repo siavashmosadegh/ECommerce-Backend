@@ -1,3 +1,5 @@
+use mydatabase;
+
 CREATE TABLE [dbo].[Product] (
     [ProductID]          INT            IDENTITY (1, 1) NOT NULL,
     [ProductName]        NVARCHAR (255) NOT NULL,
@@ -6,18 +8,18 @@ CREATE TABLE [dbo].[Product] (
     [CategoryID]         INT            NULL,
     [Price]              DECIMAL (18)   NOT NULL,
     [DiscountID]         INT            NULL,
-    [DateCreatedAt]      DATE           NULL,
-    [TimeCreatedAt]      TIME (7)       NULL,
-    [DateModifiedAt]     DATE           NULL,
-    [TimeModifiedAt]     TIME (7)       NULL,
-    [DateDeletedAt]      DATE           NULL,
-    [TimeDeletedAt]      TIME (7)       NULL,
     [ProductInventoryID] INT            NULL,
     [CarID]              INT            NOT NULL,
     [productTypeID]      INT            NOT NULL,
+    [ProductTypeBrandID] INT            NOT NULL,
+    [productIsOriginal]  BIT            NULL,
+    [CreatedAt]          DATETIME       NULL,
+    [ModifiedAt]         DATETIME       NULL,
+    [DeletedAt]          DATETIME       NULL,
     PRIMARY KEY CLUSTERED ([ProductID] ASC),
     FOREIGN KEY ([CarID]) REFERENCES [dbo].[Car] ([CarID]),
     FOREIGN KEY ([ProductInventoryID]) REFERENCES [dbo].[ProductInventory] ([ProductInventoryID]),
+    FOREIGN KEY ([ProductTypeBrandID]) REFERENCES [dbo].[ProductTypeBrand] ([ProductTypeBrandID]),
     FOREIGN KEY ([productTypeID]) REFERENCES [dbo].[ProductType] ([productTypeID]),
     CONSTRAINT [FK_Product_Category] FOREIGN KEY ([CategoryID]) REFERENCES [dbo].[Category] ([CategoryID]) ON DELETE CASCADE ON UPDATE CASCADE
 );
