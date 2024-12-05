@@ -19,7 +19,8 @@ import {
     getCarByCarBrandID,
     createNewProductTypeBrand,
     getAllProductTypeBrands,
-    getProductFeaturesByProductID
+    getProductFeaturesByProductID,
+    getAllCars
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -30,6 +31,7 @@ const router = express.Router();
 
 router.route("/products/get-all-categories").get( getAllCategories );
 router.route("/products/get-all-car-brands").get( getAllCarBrands );
+router.route("/car/get-all-cars").get( getAllCars );
 
 router.route("/products").get(getProducts);
 router.route("/admin/products").post( authenticateToken, authorizeRoles("admin") ,createProducts);
