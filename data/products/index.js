@@ -66,10 +66,7 @@ const createNewProduct = async (productData) => {
             CategoryID,
             DiscountID,
             ProductInventoryID,
-            productIsOriginal,
-            CreatedAt,
-            ModifiedAt,
-            DeletedAt
+            productIsOriginal
         } = productData;
 
         console.log(productIsOriginal);
@@ -96,21 +93,6 @@ const createNewProduct = async (productData) => {
             console.log(`productIsOriginal: ${productIsOriginal}`);
             query += `, productIsOriginal`;
             values += `, @productIsOriginal`
-        }
-
-        if (CreatedAt) {
-            query += `, CreatedAt`;
-            values += `, @CreatedAt`
-        }
-
-        if (ModifiedAt) {
-            query += `, ModifiedAt`;
-            values += `, @ModifiedAt`
-        }
-
-        if (DeletedAt) {
-            query += `, DeletedAt`;
-            values += `, @DeletedAt`
         }
 
         query += `)`;
@@ -143,18 +125,6 @@ const createNewProduct = async (productData) => {
         if (productIsOriginal !== undefined) {
             console.log(`productIsOriginal: ${productIsOriginal}`);
             request.input('productIsOriginal', Bit, productIsOriginal);
-        }
-
-        if (CreatedAt) {
-            request.input('CreatedAt', DateTime, CreatedAt);
-        }
-
-        if (ModifiedAt) {
-            request.input('ModifiedAt', DateTime, ModifiedAt);
-        }
-
-        if (DeletedAt) {
-            request.input('DeletedAt', DateTime, DeletedAt);
         }
 
         console.log(finalQuery);
