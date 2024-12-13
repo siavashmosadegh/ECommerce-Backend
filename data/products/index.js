@@ -3,7 +3,17 @@
 import {loadSqlQueries} from '../utils.js';
 //import {sqlconfig} from '../../config.js';
 import pkg from 'mssql';
-const {connect,sql,NVarChar,Int,Request} = pkg;
+const {
+    connect,
+    sql,
+    NVarChar,
+    Int,
+    Bit,
+    DateTime,
+    Decimal,
+    NText,
+    Request
+} = pkg;
 
 const getProductsData = async (search) => {
     try {
@@ -43,17 +53,114 @@ const createNewProduct = async (productData) => {
                 encrypt: false,
                 enableArithAbort: true
             }            
-        })
-        const sqlQueries = await loadSqlQueries('products');
-        const insertProduct = await pool.request()
-                                    .input('ProductName', NVarChar(100), productData.ProductName)
-                                    .input('Description', NVarChar(100), productData.Description)
-                                    .input('SKU', NVarChar(100), productData.SKU)
-                                    .input('CategoryID', Int(), productData.CategoryID)
-                                    .input('Price', Int(), productData.Price)
-                                    .input('DiscountID', Int(), productData.DiscountID)
-                                    .query(sqlQueries.createproduct);
-        return insertProduct.recordset;
+        });
+
+        const {
+            ProductName,
+            Description,
+            SKU,
+            Price,
+            CarID,
+            productTypeID,
+            ProductTypeBrandID,
+            CategoryID,
+            DiscountID,
+            ProductInventoryID,
+            productIsOriginal,
+            CreatedAt,
+            ModifiedAt,
+            DeletedAt
+        } = productData;
+
+        console.log(productIsOriginal);
+
+        let query = `INSERT INTO Product (ProductName, Description, SKU, Price, CarID, productTypeID, ProductTypeBrandID `;
+        let values = ` VALUES (@ProductName, @Description, @SKU, @Price, @CarID, @productTypeID, @ProductTypeBrandID `;
+
+        if (CategoryID) {
+            query += `, CategoryID`;
+            values += `, @CategoryID`
+        }
+
+        if (DiscountID) {
+            query += `, DiscountID`;
+            values += `, @DiscountID`
+        }
+
+        if (ProductInventoryID) {
+            query += `, ProductInventoryID`;
+            values += `, @ProductInventoryID`
+        }
+
+        if (productIsOriginal !== undefined) {
+            console.log(`productIsOriginal: ${productIsOriginal}`);
+            query += `, productIsOriginal`;
+            values += `, @productIsOriginal`
+        }
+
+        if (CreatedAt) {
+            query += `, CreatedAt`;
+            values += `, @CreatedAt`
+        }
+
+        if (ModifiedAt) {
+            query += `, ModifiedAt`;
+            values += `, @ModifiedAt`
+        }
+
+        if (DeletedAt) {
+            query += `, DeletedAt`;
+            values += `, @DeletedAt`
+        }
+
+        query += `)`;
+        values += `)`;
+
+        const finalQuery = query + values;
+
+        const request = new Request;
+
+        request.input('ProductName', NVarChar(255), ProductName);
+        request.input('Description', NText, Description);
+        request.input('SKU', NVarChar(255), SKU);
+        request.input('Price', Decimal(18,0), Price);
+        request.input('CarID', Int, CarID);
+        request.input('productTypeID', Int, productTypeID);
+        request.input('ProductTypeBrandID', Int, ProductTypeBrandID);
+
+        if (CategoryID) {
+            request.input('CategoryID', Int, CategoryID);
+        }
+
+        if (DiscountID) {
+            request.input('DiscountID', Int, DiscountID);
+        }
+
+        if (ProductInventoryID) {
+            request.input('ProductInventoryID', Int, ProductInventoryID);
+        }
+
+        if (productIsOriginal !== undefined) {
+            console.log(`productIsOriginal: ${productIsOriginal}`);
+            request.input('productIsOriginal', Bit, productIsOriginal);
+        }
+
+        if (CreatedAt) {
+            request.input('CreatedAt', DateTime, CreatedAt);
+        }
+
+        if (ModifiedAt) {
+            request.input('ModifiedAt', DateTime, ModifiedAt);
+        }
+
+        if (DeletedAt) {
+            request.input('DeletedAt', DateTime, DeletedAt);
+        }
+
+        console.log(finalQuery);
+
+        await request.query(finalQuery);
+
     } catch (error) {
         return error.message
     }
