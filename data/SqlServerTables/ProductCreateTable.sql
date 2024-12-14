@@ -13,7 +13,7 @@ CREATE TABLE [dbo].[Product] (
     [productTypeID]      INT            NOT NULL,
     [ProductTypeBrandID] INT            NOT NULL,
     [productIsOriginal]  BIT            NULL,
-    [CreatedAt]          DATETIME       NULL,
+    [CreatedAt]          DATETIME       DEFAULT (getdate()) NULL,
     [ModifiedAt]         DATETIME       NULL,
     [DeletedAt]          DATETIME       NULL,
     PRIMARY KEY CLUSTERED ([ProductID] ASC),
