@@ -772,6 +772,31 @@ const createNewProductFeatureData = async (data) => {
 
 }
 
+const getProductsBasedOnCarViaProductTypeIDData = async (productTypeID) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('products');
+
+        const result = await pool.request()
+            .input('productTypeID', Int, productTypeID)
+            .query(sqlQueries.getProductsBasedOnCarViaProductTypeID);
+
+        return result.recordset;
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     getProductsData,
     createNewProduct,
@@ -794,5 +819,6 @@ export {
     getAllProductTypeBrandsData,
     getProductFeaturesByProductIDData,
     getAllCarsData,
-    createNewProductFeatureData
+    createNewProductFeatureData,
+    getProductsBasedOnCarViaProductTypeIDData
 }
