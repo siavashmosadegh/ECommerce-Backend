@@ -1,103 +1,19 @@
-use mydatabase;
+USE [mydatabase]
+GO
+SET IDENTITY_INSERT [dbo].[Car] ON 
 
-INSERT INTO [dbo].[Car]
-    (
-        [CarBrandID],
-        [CarName],
-		[CarNameFarsi],
-		[CarModel],
-		[CarModelFarsi],
-		[TrimLevel],
-		[TrimLevelFarsi]
-    )
-VALUES 
-(
-    ('2'),
-    ('peugeot'),
-	(N'پژو'),
-	('206'),
-	(N'206'),
-	('1'),
-	(N'1')
-),
-(
-    ('2'),
-    ('peugeot'),
-	(N'پژو'),
-	('206'),
-	(N'206'),
-	('2'),
-	(N'2')
-),
-(
-    ('2'),
-    ('peugeot'),
-	(N'پژو'),
-	('206'),
-	(N'206'),
-	('3'),
-	(N'3')
-),
-(
-    ('2'),
-    ('peugeot'),
-	(N'پژو'),
-	('206'),
-	(N'206'),
-	('4'),
-	(N'4')
-),
-(
-    ('2'),
-    ('peugeot'),
-	(N'پژو'),
-	('206'),
-	(N'206'),
-	('5'),
-	(N'5')
-),
-(
-	('2'),
-    ('peugeot'),
-	(N'پژو'),
-	('206'),
-	(N'206'),
-	('SD'),
-	(N'صندوقدار')
-),
-(
-    ('2'),
-    ('peugeot'),
-	(N'پژو'),
-	('405'),
-	(N'405'),
-	('GL'),
-	(N'GL')
-),
-(
-    ('2'),
-    ('peugeot'),
-	(N'پژو'),
-	('405'),
-	(N'405'),
-	('GLX'),
-	(N'GLX')
-),
-(
-    ('2'),
-    ('peugeot'),
-	(N'پژو'),
-	('405'),
-	(N'405'),
-	('GLI'),
-	(N'GLI')
-),
-(
-    ('2'),
-    ('peugeot'),
-	(N'پژو'),
-	('405'),
-	(N'405'),
-	('SLX'),
-	(N'SLX')
-)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (1, 2, N'206', N'206', N'1', N'1', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (2, 2, N'206', N'206', N'2', N'2', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (3, 2, N'206', N'206', N'3', N'3', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (4, 2, N'206', N'206', N'4', N'4', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (5, 2, N'206', N'206', N'5', N'5', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (6, 2, N'206', N'206', N'SD', N'صندوقدار', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (7, 2, N'405', N'405', N'GL', N'GL', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (8, 2, N'405', N'405', N'GLX', N'GLX', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (9, 2, N'405', N'405', N'GLI', N'GLI', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (10, 2, N'405', N'405', N'SLX', N'SLX', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (11, 2, N'pars', N'پارس', N'ELX', N'ای ال ایکس', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (12, 2, N'pars', N'پارس', N'LX', N'ال ایکس', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+INSERT [dbo].[Car] ([CarID], [CarBrandID], [CarModel], [CarModelFarsi], [TrimLevel], [TrimLevelFarsi], [SubTrimLevel], [SubTrimLevelFarsi], [Year], [CarName], [CarNameFarsi], [Engine]) VALUES (13, 2, N'pars', N'پارس', N'normal', N'معمولی', NULL, NULL, NULL, N'peugeot', N'پژو', NULL)
+SET IDENTITY_INSERT [dbo].[Car] OFF
+GO
