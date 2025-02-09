@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[Car] (
     [Year]              INT           NULL,
     [CarName]           NVARCHAR (50) NOT NULL,
     [CarNameFarsi]      NVARCHAR (50) NOT NULL,
+    [Engine]            NVARCHAR (50) NULL,
     PRIMARY KEY CLUSTERED ([CarID] ASC),
     FOREIGN KEY ([CarBrandID]) REFERENCES [dbo].[CarBrands] ([CarBrandID])
 );
