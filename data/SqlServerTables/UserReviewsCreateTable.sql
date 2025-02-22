@@ -1,11 +1,12 @@
+use mydatabase
+
 CREATE TABLE [dbo].[UserReviews] (
-    [id]            UNIQUEIDENTIFIER DEFAULT (newid()) NOT NULL,
-    [userId]        INT              NULL,
-    [productId]     INT              NULL,
-    [rating]        INT              NULL,
-    [reviewText]    TEXT             NULL,
-    [createdAtDate] DATETIME         DEFAULT (getdate()) NULL,
-    PRIMARY KEY CLUSTERED ([id] ASC),
-    FOREIGN KEY ([productId]) REFERENCES [dbo].[Product] ([ProductID]),
-    FOREIGN KEY ([userId]) REFERENCES [dbo].[Users] ([UserID])
+    [UserReviewsID] UNIQUEIDENTIFIER PRIMARY KEY DEFAULT (newid()) NOT NULL,
+    [UserId]        INT              NULL,
+    [ProductId]     UNIQUEIDENTIFIER NULL,
+    [Rating]        INT              NULL,
+    [ReviewText]    TEXT             NULL,
+    [CreatedAtDate] DATETIME         DEFAULT (getdate()) NULL,
+    FOREIGN KEY ([ProductId]) REFERENCES [dbo].[Product] ([ProductID]),
+    FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([UserID])
 );
