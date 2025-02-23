@@ -11,7 +11,7 @@ CREATE TABLE [dbo].[Users] (
     [State]              NVARCHAR (100) NULL,
     [ZipCode]            NVARCHAR (20)  NULL,
     [Country]            NVARCHAR (100) NULL,
-    [CreatedAt]          DATETIME       NULL,
+    [CreatedAt]          DATETIME       NULL DEFAULT (getdate()),
     [UpdatedAt]          DATETIME       NULL,
     [reset_token]        NVARCHAR (255) NULL,
     [reset_token_expiry] DATETIME       NULL,
