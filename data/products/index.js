@@ -791,6 +791,15 @@ const getProductsBasedOnCarViaProductTypeIDData = async (productTypeID) => {
             .input('productTypeID', Int, productTypeID)
             .query(sqlQueries.getProductsBasedOnCarViaProductTypeID);
 
+        const secondResult = await pool.request()
+            .input('productTypeID', Int, productTypeID)
+            .query(sqlQueries.getProductTypeBasedOnProductTypeID);
+
+        result.recordset = {
+            productTypeDetails: secondResult.recordset,
+            data: result.recordset
+        };
+
         return result.recordset;
     } catch (error) {
         return error.message;
