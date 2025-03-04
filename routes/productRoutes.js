@@ -22,7 +22,8 @@ import {
     getProductFeaturesByProductID,
     getAllCars,
     createNewProductFeature,
-    getProductsBasedOnCarViaProductTypeID
+    getProductsBasedOnCarViaProductTypeID,
+    getProductTypeByProductTypeID
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -53,6 +54,7 @@ router.route("/products/category/:id").get( getProductByCategoryID );
 
 router.route("/admin/productType/add-new-product-type").post( authenticateToken, authorizeRoles("admin"), addNewProductType );
 router.route("/productType/get-product-type-by-category-id/:id").get( getProductTypeByCategoryID );
+router.route("/productType/get-product-type-by-id/:id").get( getProductTypeByProductTypeID );
 
 router.route("/admin/car/create-new-car").post( authenticateToken, authorizeRoles("admin"), createNewCar );
 router.route("/car/get-car-by-car-brand-id/:id").get( getCarByCarBrandID );
