@@ -509,15 +509,16 @@ const createNewCarData = async ( data ) => {
 
         const {
             CarBrandID,
-            CarName,
-            CarNameFarsi,
             CarModel,
             CarModelFarsi,
             TrimLevel,
             TrimLevelFarsi,
             SubTrimLevel,
             SubTrimLevelFarsi,
-            Year
+            Year,
+            CarName,
+            CarNameFarsi,
+            Engine
         } = data;
 
         console.log(data);
@@ -552,6 +553,11 @@ const createNewCarData = async ( data ) => {
             values += `, @Year`;
         }
 
+        if (Engine) {
+            query += `, Engine`;
+            values += `, @Engine`;
+        }
+
         query += `)`;
         values += `)`;
 
@@ -583,6 +589,10 @@ const createNewCarData = async ( data ) => {
 
         if (Year) {
             request.input('Year', Int, Year);
+        }
+
+        if (Engine) {
+            request.input('Engine', NVarChar(50), Engine)
         }
 
         console.log(query);
