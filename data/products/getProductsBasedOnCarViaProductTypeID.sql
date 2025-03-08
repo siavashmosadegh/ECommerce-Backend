@@ -7,6 +7,7 @@ select *
 				ProductName,
 				CarModel,
 				CarName,
+				Car.CarID,
 				ROW_NUMBER() Over (PARTITION BY CarModel,CarName ORDER BY ProductID) As rn,
 				CarModelFarsi,
 				CarNameFarsi
