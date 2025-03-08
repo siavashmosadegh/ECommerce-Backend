@@ -12,7 +12,8 @@ const {
     DateTime,
     Decimal,
     NText,
-    Request
+    Request,
+    UniqueIdentifier
 } = pkg;
 
 const getProductsData = async (search) => {
@@ -150,7 +151,7 @@ const getProductById = async (productId) => {
         });
         const sqlQueries = await loadSqlQueries('products');
         const oneProduct = await pool.request()
-                                .input('productId', Int(), productId)
+                                .input('productId', UniqueIdentifier(), productId)
                                 .query(sqlQueries.productById);
         return oneProduct.recordset;
     } catch (error) {
