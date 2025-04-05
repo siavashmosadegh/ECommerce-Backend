@@ -23,7 +23,8 @@ import {
     getAllCars,
     createNewProductFeature,
     getProductsBasedOnCarViaProductTypeID,
-    getProductTypeByProductTypeID
+    getProductTypeByProductTypeID,
+    getCarByCarID
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -58,6 +59,7 @@ router.route("/productType/get-product-type-by-id/:id").get( getProductTypeByPro
 
 router.route("/admin/car/create-new-car").post( authenticateToken, authorizeRoles("admin"), createNewCar );
 router.route("/car/get-car-by-car-brand-id/:id").get( getCarByCarBrandID );
+router.route("/car/get-car-by-car-id/:id").get( getCarByCarID )
 
 router.route("/admin/product-type-brand/create-new-brand").post( authenticateToken, authorizeRoles("admin"), createNewProductTypeBrand );
 router.route("/product-type-brand/get-all").get( getAllProductTypeBrands );
