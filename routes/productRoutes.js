@@ -24,7 +24,8 @@ import {
     createNewProductFeature,
     getProductsBasedOnCarViaProductTypeID,
     getProductTypeByProductTypeID,
-    getCarByCarID
+    getCarByCarID,
+    getProductsByCarIdAndProductTypeId
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -67,7 +68,9 @@ router.route("/product-type-brand/get-all").get( getAllProductTypeBrands );
 router.route("/product-features/:id").get( getProductFeaturesByProductID );
 router.route("/admin/product-features/create-new-product-features").post( authenticateToken, authorizeRoles("admin"), createNewProductFeature );
 
-router.route("/product-category/:productTypeID").get( getProductsBasedOnCarViaProductTypeID )
+router.route("/product-category/:productTypeID").get( getProductsBasedOnCarViaProductTypeID );
+
+router.route("/product/car-brand/get-products-carId-productTypeId/:productTypeId/:carId").get( getProductsByCarIdAndProductTypeId );
 
 
 export default router;
