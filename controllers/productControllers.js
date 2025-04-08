@@ -24,7 +24,8 @@ import {
     getProductsBasedOnCarViaProductTypeIDData,
     getProductTypeByProductTypeIDData,
     getCarByCarIDData,
-    getProductsByCarIdAndProductTypeIdData
+    getProductsByCarIdAndProductTypeIdData,
+    getAllTrimLevelsOfCarByCarIdData
 } from "../data/products/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -390,6 +391,20 @@ const getProductsByCarIdAndProductTypeId = catchAsyncErrors( async (req, res) =>
     }
 })
 
+const getAllTrimLevelsOfCarByCarId = catchAsyncErrors( async (req, res) => {
+    try {
+        const carId = req.params.carId;
+
+        const result = await getAllTrimLevelsOfCarByCarIdData(carId);
+
+        res.json({
+            result
+        });
+    } catch (error) {
+        return error.message;
+    }
+})
+
 export {
     getProducts,
     createProducts,
@@ -416,5 +431,6 @@ export {
     getProductsBasedOnCarViaProductTypeID,
     getProductTypeByProductTypeID,
     getCarByCarID,
-    getProductsByCarIdAndProductTypeId
+    getProductsByCarIdAndProductTypeId,
+    getAllTrimLevelsOfCarByCarId
 }
