@@ -770,7 +770,7 @@ const createNewProductFeatureData = async (data) => {
         } = data;
 
         const insertCategory = await pool.request()
-            .input('ProductID', Int, ProductID)
+            .input('ProductID', UniqueIdentifier, ProductID)
             .input('Title', NVarChar(255), Title)
             .input('Explanation', NVarChar(255), Explanation)
             .query(sqlQueries.CreateNewProductFeature);
