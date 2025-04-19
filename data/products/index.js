@@ -705,7 +705,7 @@ const getProductFeaturesByProductIDData = async (productID) => {
         const sqlQueries = await loadSqlQueries('products');
 
         const result = await pool.request()
-            .input('productID', Int, productID)
+            .input('productID', UniqueIdentifier, productID)
             .query(sqlQueries.getProductFeaturesByProductID);
 
         console.log(result);
