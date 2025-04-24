@@ -27,7 +27,8 @@ import {
     getCarByCarID,
     getProductsByCarIdAndProductTypeId,
     getAllTrimLevelsOfCarByCarId,
-    getProductTypeBrandNameByProductId
+    getProductTypeBrandNameByProductId,
+    getProductQuantityByProductId
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -75,6 +76,8 @@ router.route("/product-category/:productTypeID").get( getProductsBasedOnCarViaPr
 
 router.route("/product/car-brand/get-products-carId-productTypeId/:productTypeId/:carId").get( getProductsByCarIdAndProductTypeId );
 
-router.route("/product/car-brand/get-trimlevels-by-carId/:carId").get( getAllTrimLevelsOfCarByCarId )
+router.route("/product/car-brand/get-trimlevels-by-carId/:carId").get( getAllTrimLevelsOfCarByCarId );
+
+router.route("/product-inventory/get-product-quantity/:productId").get( getProductQuantityByProductId );
 
 export default router;

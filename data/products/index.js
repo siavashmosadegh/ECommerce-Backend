@@ -957,6 +957,33 @@ const getProductTypeBrandNameByProductIdData = async (productId) => {
     }
 }
 
+const getProductQuantityByProductIdData = async (productId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('products');
+
+        const result = await pool.request()
+            .input('productId', UniqueIdentifier, productId)
+            .query(sqlQueries.getProductQuantityByProductId);
+
+        console.log(result);
+
+        return result.recordset;
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     getProductsData,
     createNewProduct,
@@ -985,5 +1012,6 @@ export {
     getCarByCarIDData,
     getProductsByCarIdAndProductTypeIdData,
     getAllTrimLevelsOfCarByCarIdData,
-    getProductTypeBrandNameByProductIdData
+    getProductTypeBrandNameByProductIdData,
+    getProductQuantityByProductIdData
 }
