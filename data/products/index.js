@@ -13,7 +13,8 @@ const {
     Decimal,
     NText,
     Request,
-    UniqueIdentifier
+    UniqueIdentifier,
+    Transaction
 } = pkg;
 
 const getProductsData = async (search) => {
@@ -44,8 +45,11 @@ const getProductsData = async (search) => {
 }
 
 const createNewProduct = async (productData) => {
+    let pool;
+    let transaction;
+
     try {
-        let pool = await connect({
+        pool = await connect({
             server: process.env.SQL_SERVER,
             user: process.env.SQL_USER,
             password: process.env.SQL_PASSWORD,
@@ -53,8 +57,11 @@ const createNewProduct = async (productData) => {
             options: {
                 encrypt: false,
                 enableArithAbort: true
-            }            
+            }
         });
+
+        transaction = new Transaction(pool);
+        await transaction.begin();
 
         const {
             ProductName,
@@ -66,34 +73,39 @@ const createNewProduct = async (productData) => {
             ProductTypeBrandID,
             CategoryID,
             DiscountID,
-            ProductInventoryID,
-            productIsOriginal
+            productIsOriginal,
+            Quantity // 👈 required for ProductInventory
         } = productData;
 
-        console.log(productIsOriginal);
+        // Step 1: Insert into ProductInventory
+        const inventoryRequest = new Request(transaction);
+        inventoryRequest.input('Quantity', Int, Quantity);
 
-        let query = `INSERT INTO Product (ProductName, Description, SKU, Price, CarID, productTypeID, ProductTypeBrandID `;
-        let values = ` VALUES (@ProductName, @Description, @SKU, @Price, @CarID, @productTypeID, @ProductTypeBrandID `;
+        const inventoryResult = await inventoryRequest.query(`
+            INSERT INTO ProductInventory (Quantity)
+            OUTPUT INSERTED.ProductInventoryID
+            VALUES (@Quantity)
+        `);
+
+        const ProductInventoryID = inventoryResult.recordset[0].ProductInventoryID;
+
+        // Step 2: Insert into Product (dynamic query as before)
+        let query = `INSERT INTO Product (ProductName, Description, SKU, Price, CarID, productTypeID, ProductTypeBrandID, ProductInventoryID`;
+        let values = ` VALUES (@ProductName, @Description, @SKU, @Price, @CarID, @productTypeID, @ProductTypeBrandID, @ProductInventoryID`;
 
         if (CategoryID) {
             query += `, CategoryID`;
-            values += `, @CategoryID`
+            values += `, @CategoryID`;
         }
 
         if (DiscountID) {
             query += `, DiscountID`;
-            values += `, @DiscountID`
-        }
-
-        if (ProductInventoryID) {
-            query += `, ProductInventoryID`;
-            values += `, @ProductInventoryID`
+            values += `, @DiscountID`;
         }
 
         if (productIsOriginal !== undefined) {
-            console.log(`productIsOriginal: ${productIsOriginal}`);
             query += `, productIsOriginal`;
-            values += `, @productIsOriginal`
+            values += `, @productIsOriginal`;
         }
 
         query += `)`;
@@ -101,41 +113,39 @@ const createNewProduct = async (productData) => {
 
         const finalQuery = query + values;
 
-        const request = new Request;
-
-        request.input('ProductName', NVarChar(255), ProductName);
-        request.input('Description', NText, Description);
-        request.input('SKU', NVarChar(255), SKU);
-        request.input('Price', Decimal(18,0), Price);
-        request.input('CarID', Int, CarID);
-        request.input('productTypeID', Int, productTypeID);
-        request.input('ProductTypeBrandID', Int, ProductTypeBrandID);
+        const productRequest = new Request(transaction);
+        productRequest.input('ProductName', NVarChar(255), ProductName);
+        productRequest.input('Description', NText, Description);
+        productRequest.input('SKU', NVarChar(255), SKU);
+        productRequest.input('Price', Decimal(18, 0), Price);
+        productRequest.input('CarID', Int, CarID);
+        productRequest.input('productTypeID', Int, productTypeID);
+        productRequest.input('ProductTypeBrandID', Int, ProductTypeBrandID);
+        productRequest.input('ProductInventoryID', UniqueIdentifier, ProductInventoryID);
 
         if (CategoryID) {
-            request.input('CategoryID', Int, CategoryID);
+            productRequest.input('CategoryID', Int, CategoryID);
         }
 
         if (DiscountID) {
-            request.input('DiscountID', Int, DiscountID);
-        }
-
-        if (ProductInventoryID) {
-            request.input('ProductInventoryID', Int, ProductInventoryID);
+            productRequest.input('DiscountID', Int, DiscountID);
         }
 
         if (productIsOriginal !== undefined) {
-            console.log(`productIsOriginal: ${productIsOriginal}`);
-            request.input('productIsOriginal', Bit, productIsOriginal);
+            productRequest.input('productIsOriginal', Bit, productIsOriginal);
         }
 
-        console.log(finalQuery);
+        await productRequest.query(finalQuery);
+        await transaction.commit();
 
-        await request.query(finalQuery);
+        return { message: 'Product and inventory created successfully', ProductInventoryID };
 
     } catch (error) {
-        return error.message
+        if (transaction) await transaction.rollback();
+        console.error('Error in createNewProduct:', error);
+        return { error: 'Failed to create product and inventory' };
     }
-}
+};
 
 const getProductById = async (productId) => {
     try {
