@@ -28,7 +28,8 @@ import {
     getProductsByCarIdAndProductTypeId,
     getAllTrimLevelsOfCarByCarId,
     getProductTypeBrandNameByProductId,
-    getProductQuantityByProductId
+    getProductQuantityByProductId,
+    getCategoryByProductID
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -51,6 +52,7 @@ router.route("/products/:productId/reviews").get( getReviewsOfOneProduct );
 
 router.route("/admin/products/add-new-category").post( authenticateToken, authorizeRoles("admin"), addNewCategory);
 router.route("/products/get-category/:id").get( getCategory );
+router.route("/products/category/get-category-by-product-id/:productId").get( getCategoryByProductID );
 
 router.route("/admin/products/add-new-car-brand").post( authenticateToken, authorizeRoles("admin"), addNewCarBrand );
 router.route("/products/get-car-brand/:id").get( getCarBrandByCarBrandID );
