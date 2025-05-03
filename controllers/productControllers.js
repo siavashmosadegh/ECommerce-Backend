@@ -227,7 +227,7 @@ const addNewProductType = catchAsyncErrors (async (req, res) => {
 
 const getProductTypeByCategoryID = catchAsyncErrors (async (req, res) => {
     try {
-        const categoryID = req.params.id;
+        const categoryID = req.params.categoryId;
 
         const result = await getProductTypeByCategoryIDData(categoryID);
 

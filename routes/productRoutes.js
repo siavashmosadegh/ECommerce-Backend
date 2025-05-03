@@ -60,7 +60,7 @@ router.route("/products/get-car-brand/:id").get( getCarBrandByCarBrandID );
 router.route("/products/category/:id").get( getProductByCategoryID );
 
 router.route("/admin/productType/add-new-product-type").post( authenticateToken, authorizeRoles("admin"), addNewProductType );
-router.route("/productType/get-product-type-by-category-id/:id").get( getProductTypeByCategoryID );
+router.route("/productType/get-product-type-by-category-id/:categoryId").get( getProductTypeByCategoryID );
 router.route("/productType/get-product-type-by-id/:id").get( getProductTypeByProductTypeID );
 
 router.route("/admin/car/create-new-car").post( authenticateToken, authorizeRoles("admin"), createNewCar );
