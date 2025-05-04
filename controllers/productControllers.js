@@ -256,7 +256,7 @@ const createNewCar = catchAsyncErrors (async (req, res) => {
 
 const getCarByCarBrandID = catchAsyncErrors (async (req, res) => {
     try {
-        const carBrandID = req.params.id;
+        const carBrandID = req.params.carBrandId;
 
         const result = await getCarByCarBrandIDData(carBrandID);
 
