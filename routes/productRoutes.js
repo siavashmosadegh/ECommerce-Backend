@@ -67,7 +67,7 @@ router.route("/productType/get-product-type-by-product-Id/:productId").get( getP
 
 router.route("/admin/car/create-new-car").post( authenticateToken, authorizeRoles("admin"), createNewCar );
 router.route("/car/get-car-by-car-brand-id/:carBrandId").get( getCarByCarBrandID );
-router.route("/car/get-car-by-car-id/:id").get( getCarByCarID )
+router.route("/car/get-car-by-car-id/:carId").get( getCarByCarID )
 
 router.route("/admin/product-type-brand/create-new-brand").post( authenticateToken, authorizeRoles("admin"), createNewProductTypeBrand );
 router.route("/product-type-brand/get-all").get( getAllProductTypeBrands );

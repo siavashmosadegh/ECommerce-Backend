@@ -367,7 +367,7 @@ const getProductTypeByProductTypeID = catchAsyncErrors (async (req, res) => {
 
 const getCarByCarID = catchAsyncErrors( async (req, res) => {
     try {
-        const carID = req.params.id;
+        const carID = req.params.carId;
 
         const result = await getCarByCarIDData(carID);
 
