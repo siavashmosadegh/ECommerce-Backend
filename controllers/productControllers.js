@@ -495,6 +495,34 @@ const getProductsBasedOnCarViaCategoryID = catchAsyncErrors( async (req, res) =>
     }
 })
 
+const getProductsBasedOnCar = catchAsyncErrors( async (req, res) => {
+    try {
+        const { id } = req.params;
+        const path = req.path;
+
+        console.log(path);
+
+        if (path.includes('/product-type/')) {
+
+            const result = await getProductsBasedOnCarViaProductTypeIDData(id);
+
+            res.json({
+                result
+            });
+
+        } else if (path.includes('/category/')) {
+
+            const result = await getProductsBasedOnCarViaCategoryIDData(id);
+
+            res.json({
+                result
+            });
+        }
+    } catch (error) {
+        return error.message;
+    }
+})
+
 export {
     getProducts,
     createProducts,
@@ -528,5 +556,6 @@ export {
     getCategoryByProductID,
     getProductTypeByProductId,
     getCarByProductId,
-    getProductsBasedOnCarViaCategoryID
+    getProductsBasedOnCarViaCategoryID,
+    getProductsBasedOnCar
 }
