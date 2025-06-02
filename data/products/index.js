@@ -1087,7 +1087,7 @@ const getProductsBasedOnCarViaCategoryIDData = async (categoryID) => {
             .query(sqlQueries.getCategoryByCategoryID);
 
         result.recordset = {
-            productTypeDetails: secondResult.recordset,
+            categoryDetails: secondResult.recordset,
             data: result.recordset
         };
 
