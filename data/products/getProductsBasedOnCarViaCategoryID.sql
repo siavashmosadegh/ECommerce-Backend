@@ -1,18 +1,24 @@
 use mydatabase;
 
-select *
-	from (
-			select
-				ProductID,
-				ProductName,
-				CarModel,
-				CarName,
-				Car.CarID,
-				ROW_NUMBER() Over (PARTITION BY CarModel,CarName,productTypeID ORDER BY ProductID) As rn,
-				CarModelFarsi,
-				CarNameFarsi
-			From Product
-			Inner JOIN Car ON Product.CarID = Car.CarID
-			Where CategoryID = @CategoryID
-		) AS subquery
-where rn = 1
+SELECT *
+	FROM (
+		SELECT
+			Product.ProductID,
+			Product.ProductName,
+			Car.CarModel,
+			Car.CarName,
+			Car.CarID,
+			ROW_NUMBER() OVER (
+				PARTITION BY Car.CarModel, Car.CarName, Product.ProductTypeID
+				ORDER BY Product.ProductID
+			) AS rn,
+			Car.CarModelFarsi,
+			Car.CarNameFarsi,
+			ProductType.productTypeNameFarsi,
+			ProductType.productTypeID
+		FROM Product
+		INNER JOIN Car ON Product.CarID = Car.CarID
+		INNER JOIN ProductType ON Product.ProductTypeID = ProductType.ProductTypeID
+		WHERE Product.CategoryID = 2
+	) AS subquery
+WHERE rn = 1;
