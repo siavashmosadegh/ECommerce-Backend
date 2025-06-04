@@ -19,6 +19,6 @@ SELECT *
 		FROM Product
 		INNER JOIN Car ON Product.CarID = Car.CarID
 		INNER JOIN ProductType ON Product.ProductTypeID = ProductType.ProductTypeID
-		WHERE Product.CategoryID = 2
+		WHERE Product.CategoryID = @CategoryID
 	) AS subquery
 WHERE rn = 1;
