@@ -1,0 +1,12 @@
+use mydatabase;
+
+CREATE TABLE [dbo].[CartItems] (
+    CartItemId INT PRIMARY KEY IDENTITY(1,1),
+    CartId UNIQUEIDENTIFIER NOT NULL,
+    ProductID UNIQUEIDENTIFIER NOT NULL,
+    Quantity INT NOT NULL DEFAULT 1,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (CartId) REFERENCES Cart(CartId) ON DELETE CASCADE,
+    FOREIGN KEY (ProductID) REFERENCES Product(ProductID),
+    CONSTRAINT UQ_CartItem UNIQUE (CartId, ProductID)
+);
