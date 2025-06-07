@@ -4,7 +4,8 @@ import {
     getOrderDetailsData,
     updateOrderStatusData,
     getAllOrdersOfOneUserData,
-    deleteOneOrderData
+    deleteOneOrderData,
+    getCartViaUserIDData
 } from "../data/orders/index.js";
 
 const placeNewOrder = catchAsyncErrors( async (req, res) => {
@@ -87,12 +88,29 @@ const deleteOneOrder = catchAsyncErrors( async (req, res) => {
     res.json({
         result
     })
-})
+});
+
+const getCartViaUserID = catchAsyncErrors( async (req, res) => {
+
+    const id = req.userId;
+
+    // const result = await pool.request()
+    //     .input('userId', sql.Int, userId)
+    //     .query(`SELECT * FROM Cart WHERE UserId = @userId`);
+
+    const result = await getCartViaUserIDData(id);
+
+    res.json({
+        result
+    })
+
+});
 
 export {
     placeNewOrder,
     getOrderDetails,
     updateOrderStatus,
     getAllOrdersOfOneUser,
-    deleteOneOrder
+    deleteOneOrder,
+    getCartViaUserID
 }

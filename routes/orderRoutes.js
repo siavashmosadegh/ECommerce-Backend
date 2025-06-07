@@ -10,7 +10,8 @@ import {
     getOrderDetails,
     updateOrderStatus,
     getAllOrdersOfOneUser,
-    deleteOneOrder
+    deleteOneOrder,
+    getCartViaUserID
 } from '../controllers/orderControllers.js';
 
 const router = express.Router();
@@ -20,5 +21,7 @@ router.route("/order/get-order-details/:orderId").get( authenticateToken, getOrd
 router.route("/admin/order/update-order-status/:orderId").put( authenticateToken, authorizeRoles("admin"), updateOrderStatus);
 router.route("/order/get-all-orders-of-one-user/:userId").get( authenticateToken , getAllOrdersOfOneUser);
 router.route("/admin/order/delete-one-order/:orderId").delete( authenticateToken, authorizeRoles("admin"), deleteOneOrder);
+
+router.route("/cart/get-cart-via-user-id").get( authenticateToken, extractIdFromToken ,getCartViaUserID );
 
 export default router;

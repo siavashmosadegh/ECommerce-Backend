@@ -205,10 +205,54 @@ const deleteOneOrderData = async (orderId) => {
     }
 }
 
+const getCartViaUserIDData = async (userID) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('orders');
+
+        const existingCart = await pool.request()
+            .input('UserID', Int, userID)
+            .query(sqlQueries.getCartViaUserID);
+
+        if (existingCart.recordset.length === 0 ) {
+            const insert = await pool.request()
+                .input('UserID', Int, userID)
+                .query(sqlQueries.insertIntoCartViaUserIdINITIALY);
+            const value = { cartId: insert.recordset[0].CartId, items: [] }
+            return value;
+        } else {
+            const cartId = existingCart.recordset[0].CartId;
+
+            const items = await pool.request()
+                .input('cartId', UniqueIdentifier, cartId)
+                .query(sqlQueries.getCartItemsViaCartID);
+
+            const value = {
+                cartId: cartId,
+                items: items.recordset
+            }
+            return (value);
+        }
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     placeNewOrderData,
     getOrderDetailsData,
     updateOrderStatusData,
     getAllOrdersOfOneUserData,
-    deleteOneOrderData
+    deleteOneOrderData,
+    getCartViaUserIDData
 }
