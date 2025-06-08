@@ -19,8 +19,8 @@ import {
 
 const router = express.Router();
 
-router.route("/register").post(registerUsers);
-router.route("/login").post(loginUsers);
+router.route("/register/via-user-pass").post(registerUsers);
+router.route("/login/via-user-pass").post(loginUsers);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password").post(resetPassword);
 
@@ -30,6 +30,6 @@ router.route("/update-password").post( authenticateToken, extractIdFromToken, up
 router.route("/admin/get-all-users").get(authenticateToken, authorizeRoles("admin"), getAllUsers);
 router.route("/admin/get-user/:id").get( authenticateToken, authorizeRoles("admin"), getUser);
 router.route("/admin/delete-user/:id").delete( authenticateToken, authorizeRoles("admin"), deleteUser);
-router.route("/admin/update-user/:id").patch( authenticateToken, authorizeRoles("admin"), updateUser)
+router.route("/admin/update-user/:id").patch( authenticateToken, authorizeRoles("admin"), updateUser);
 
 export default router;
