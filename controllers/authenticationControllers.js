@@ -8,7 +8,8 @@ import {
     getAllUsersData,
     getUserData,
     deleteUserData,
-    updateUserData
+    updateUserData,
+    loginUsersWithPhoneData
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -184,6 +185,15 @@ const updateUser = catchAsyncErrors( async (req, res) => {
     }
 })
 
+const loginUsersWithPhone = catchAsyncErrors( async (req, res) => {
+
+    const phoneNumber = req.body;
+
+    const result = await loginUsersWithPhoneData(phoneNumber);
+
+    res.status(200).json({ token: result });
+})
+
 export {
     registerUsers,
     loginUsers,
@@ -194,5 +204,6 @@ export {
     getAllUsers,
     getUser,
     deleteUser,
-    updateUser
+    updateUser,
+    loginUsersWithPhone
 }

@@ -421,6 +421,31 @@ const updateUserData = async (id, updates) => {
     }
 }
 
+const loginUsersWithPhoneData = async (phoneNumber) => {
+    try {
+                let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        const token = sign({ phone: phoneNumber }, process.env.JWT_SECRET, {
+            expiresIn: '1h'
+        })
+
+        return token;
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     registerUsersData,
     loginUsersData,
@@ -431,5 +456,6 @@ export {
     getAllUsersData,
     getUserData,
     deleteUserData,
-    updateUserData
+    updateUserData,
+    loginUsersWithPhoneData
 }

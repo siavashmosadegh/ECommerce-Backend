@@ -52,8 +52,23 @@ const extractIdFromToken = (req, res, next) => {
     })
 }
 
+function isValidPhoneNumber(phone) {
+    return /^(\+98|0)9\d{9}$/.test(phone);
+}
+
+const validatePhoneNumber = (req, res, next) => {
+    const phone = req.body.phoneNumber;
+
+    if (!phone || !isValidPhoneNumber(phone)) {
+        return res.status(400).json({ error: 'Invalid phone number format' });
+    }
+
+    next(); // phone number is valid
+};
+
 export {
     authenticateToken,
     authorizeRoles,
-    extractIdFromToken
+    extractIdFromToken,
+    validatePhoneNumber
 }

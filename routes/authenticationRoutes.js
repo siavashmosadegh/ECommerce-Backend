@@ -9,12 +9,14 @@ import {
     getAllUsers,
     getUser,
     deleteUser,
-    updateUser
+    updateUser,
+    loginUsersWithPhone
 } from "../controllers/authenticationControllers.js";
 import {
     authenticateToken,
     authorizeRoles,
-    extractIdFromToken
+    extractIdFromToken,
+    validatePhoneNumber
 } from '../middlewares/auth.js';
 
 const router = express.Router();
@@ -31,5 +33,7 @@ router.route("/admin/get-all-users").get(authenticateToken, authorizeRoles("admi
 router.route("/admin/get-user/:id").get( authenticateToken, authorizeRoles("admin"), getUser);
 router.route("/admin/delete-user/:id").delete( authenticateToken, authorizeRoles("admin"), deleteUser);
 router.route("/admin/update-user/:id").patch( authenticateToken, authorizeRoles("admin"), updateUser);
+
+router.route("/login/via-phone").post( validatePhoneNumber, loginUsersWithPhone);
 
 export default router;
