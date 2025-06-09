@@ -57,7 +57,7 @@ function isValidPhoneNumber(phone) {
 }
 
 const validatePhoneNumber = (req, res, next) => {
-    const phone = req.body.phoneNumber;
+    const phone = req.body.mobile;
 
     if (!phone || !isValidPhoneNumber(phone)) {
         return res.status(400).json({ error: 'Invalid phone number format' });
