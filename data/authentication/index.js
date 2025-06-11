@@ -423,6 +423,30 @@ const updateUserData = async (id, updates) => {
 
 const loginUsersWithPhoneData = async (phoneNumber) => {
     try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        //check if user DOES NOT exist
+        const existingUser = await pool.request()
+            .input('phoneNumber', NVarChar(20), phoneNumber)
+            .query(sqlQueries.checkUserExistanceViaPhoneNumber);
+
+        if (existingUser.recordset.length === 0 ) {
+            return "User Does Not Exist";
+        }
+
+        console.log(`existingUser.recordset ${existingUser.recordset[0].UserName}`)
+
         const token = sign({ phone: phoneNumber }, process.env.JWT_SECRET, {
             expiresIn: '1h'
         })
