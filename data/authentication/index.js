@@ -445,11 +445,11 @@ const loginUsersWithPhoneData = async (phoneNumber) => {
             return "User Does Not Exist";
         }
 
-        console.log(`existingUser.recordset ${existingUser.recordset[0].UserName}`)
+        const userId = existingUser.recordset[0].UserID;
 
-        const token = sign({ phone: phoneNumber }, process.env.JWT_SECRET, {
+        const token = sign({ phone: phoneNumber, id: userId }, process.env.JWT_SECRET, {
             expiresIn: '1h'
-        })
+        });
 
         return token;
     } catch (error) {

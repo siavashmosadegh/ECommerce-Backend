@@ -200,8 +200,6 @@ const loginUsersWithPhone = catchAsyncErrors( async (req, res) => {
             message: result
         })
     }
-
-    res.status(200).json({ token: result });
 })
 
 export {
