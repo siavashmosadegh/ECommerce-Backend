@@ -192,11 +192,11 @@ const loginUsersWithPhone = catchAsyncErrors( async (req, res) => {
     const result = await loginUsersWithPhoneData(phoneNumber);
 
     if (result === "User Does Not Exist") {
-        res.status(200).json({
+        res.status(404).json({
             message: "User Does Not Exist"
         })
     } else {
-        res.json({
+        res.status(200).json({
             message: result
         })
     }
