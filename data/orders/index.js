@@ -248,11 +248,36 @@ const getCartViaUserIDData = async (userID) => {
     }
 }
 
+const deleteEverythingFromCartItemsViaCartIdData = async (cartId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('orders');
+
+        await pool.request()
+            .input('cartId', UniqueIdentifier, cartId)
+            .query(sqlQueries.deleteEverythingFromCartItemsViaCartId);
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     placeNewOrderData,
     getOrderDetailsData,
     updateOrderStatusData,
     getAllOrdersOfOneUserData,
     deleteOneOrderData,
-    getCartViaUserIDData
+    getCartViaUserIDData,
+    deleteEverythingFromCartItemsViaCartIdData
 }
