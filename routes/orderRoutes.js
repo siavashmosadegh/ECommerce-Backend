@@ -24,6 +24,6 @@ router.route("/order/get-all-orders-of-one-user/:userId").get( authenticateToken
 router.route("/admin/order/delete-one-order/:orderId").delete( authenticateToken, authorizeRoles("admin"), deleteOneOrder);
 
 router.route("/cart/get-cart-via-user-id").get( authenticateToken, extractIdFromToken ,getCartViaUserID );
-router.route("/order/delete-everything-via-cart-id").delete( authenticateToken, deleteEverythingFromCartItemsViaCartId )
+router.route("/cart/delete-everything-via-cart-id").delete( authenticateToken, deleteEverythingFromCartItemsViaCartId );
 
 export default router;
