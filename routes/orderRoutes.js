@@ -12,7 +12,8 @@ import {
     getAllOrdersOfOneUser,
     deleteOneOrder,
     getCartViaUserID,
-    deleteEverythingFromCartItemsViaCartId
+    deleteEverythingFromCartItemsViaCartId,
+    getCartItemsViaCartId
 } from '../controllers/orderControllers.js';
 
 const router = express.Router();
@@ -25,5 +26,6 @@ router.route("/admin/order/delete-one-order/:orderId").delete( authenticateToken
 
 router.route("/cart/get-cart-via-user-id").get( authenticateToken, extractIdFromToken ,getCartViaUserID );
 router.route("/cart/delete-everything-via-cart-id").delete( authenticateToken, deleteEverythingFromCartItemsViaCartId );
+router.route("/cart/get-cart-items-via-cart-id").post( authenticateToken, getCartItemsViaCartId );
 
 export default router;

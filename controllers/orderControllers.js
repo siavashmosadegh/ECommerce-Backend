@@ -6,7 +6,8 @@ import {
     getAllOrdersOfOneUserData,
     deleteOneOrderData,
     getCartViaUserIDData,
-    deleteEverythingFromCartItemsViaCartIdData
+    deleteEverythingFromCartItemsViaCartIdData,
+    getCartItemsViaCartIdData
 } from "../data/orders/index.js";
 
 const placeNewOrder = catchAsyncErrors( async (req, res) => {
@@ -118,6 +119,22 @@ const deleteEverythingFromCartItemsViaCartId = catchAsyncErrors( async (req, res
     });
 })
 
+const getCartItemsViaCartId = catchAsyncErrors( async (req, res) => {
+    const cartId = req.body.cartId;
+
+    const result = await getCartItemsViaCartIdData(cartId);
+
+    if (result === "There is no product added to Cart") {
+        res.status(204).json({
+            message: "There is no product added to Cart"
+        })
+    } else {
+        res.status(200).json({
+            result
+        })
+    }
+})
+
 export {
     placeNewOrder,
     getOrderDetails,
@@ -125,5 +142,6 @@ export {
     getAllOrdersOfOneUser,
     deleteOneOrder,
     getCartViaUserID,
-    deleteEverythingFromCartItemsViaCartId
+    deleteEverythingFromCartItemsViaCartId,
+    getCartItemsViaCartId
 }

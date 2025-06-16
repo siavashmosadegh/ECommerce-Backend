@@ -272,6 +272,35 @@ const deleteEverythingFromCartItemsViaCartIdData = async (cartId) => {
     }
 }
 
+const getCartItemsViaCartIdData = async (cartId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('orders');
+
+        const existingOrder = await pool.request()
+            .input('cartId', UniqueIdentifier, cartId)
+            .query(sqlQueries.getCartItemsViaCartID);
+
+        if (existingOrder.recordset.length === 0 ) {
+            return "There is no product added to Cart";
+        } else {
+            return existingOrder.recordset
+        }
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     placeNewOrderData,
     getOrderDetailsData,
@@ -279,5 +308,6 @@ export {
     getAllOrdersOfOneUserData,
     deleteOneOrderData,
     getCartViaUserIDData,
-    deleteEverythingFromCartItemsViaCartIdData
+    deleteEverythingFromCartItemsViaCartIdData,
+    getCartItemsViaCartIdData
 }
