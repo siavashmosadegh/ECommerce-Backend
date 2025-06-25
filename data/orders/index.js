@@ -330,12 +330,47 @@ const decreaseProductQuantityInCartData = async (cartItemId, cartId, productId) 
                 .input('cartId', UniqueIdentifier, cartId)
                 .input('cartItemId', Int, cartItemId)
                 .input('productId', UniqueIdentifier, productId)
-                .query(sqlQueries.decreaseProductQuantityInCart);
+                .query(sqlQueries.updateProductQuantityInCart);
         } else {
             return "Quantity is equal to zero";
         }
     } catch (error) {
         return error.message;
+    }
+}
+
+const increaseProductQuantityInCartData = async (cartItemId, cartId, productId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('orders');
+
+        const existingCartItem = await pool.request()
+            .input('cartId', UniqueIdentifier, cartId)
+            .input('cartItemId', Int, cartItemId)
+            .input('productId', UniqueIdentifier, productId)
+            .query(sqlQueries.getProductQuantityInCart);
+
+        const quantity = existingCartItem.recordset[0].Quantity + 1;
+
+        await pool.request()
+            .input('quantity', Int, quantity)
+            .input('cartId', UniqueIdentifier, cartId)
+            .input('cartItemId', Int, cartItemId)
+            .input('productId', UniqueIdentifier, productId)
+            .query(sqlQueries.updateProductQuantityInCart);
+
+    } catch (error) {
+        return error.message
     }
 }
 
@@ -348,5 +383,6 @@ export {
     getCartViaUserIDData,
     deleteEverythingFromCartItemsViaCartIdData,
     getCartItemsViaCartIdData,
-    decreaseProductQuantityInCartData
+    decreaseProductQuantityInCartData,
+    increaseProductQuantityInCartData
 }

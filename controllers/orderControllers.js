@@ -8,7 +8,8 @@ import {
     getCartViaUserIDData,
     deleteEverythingFromCartItemsViaCartIdData,
     getCartItemsViaCartIdData,
-    decreaseProductQuantityInCartData
+    decreaseProductQuantityInCartData,
+    increaseProductQuantityInCartData
 } from "../data/orders/index.js";
 
 const placeNewOrder = catchAsyncErrors( async (req, res) => {
@@ -146,6 +147,18 @@ const decreaseProductQuantityInCart = catchAsyncErrors (async (req, res) => {
     res.json({
         result
     })
+});
+
+const increaseProductQuantityInCart = catchAsyncErrors (async (req, res) => {
+    const cartItemId = req.body.cartItemId;
+    const cartId = req.body.cartId;
+    const productId = req.body.productId;
+
+    const result = await increaseProductQuantityInCartData(cartItemId, cartId, productId);
+
+    res.json({
+        result
+    })
 })
 
 export {
@@ -157,5 +170,6 @@ export {
     getCartViaUserID,
     deleteEverythingFromCartItemsViaCartId,
     getCartItemsViaCartId,
-    decreaseProductQuantityInCart
+    decreaseProductQuantityInCart,
+    increaseProductQuantityInCart
 }

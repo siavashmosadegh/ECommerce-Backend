@@ -14,7 +14,8 @@ import {
     getCartViaUserID,
     deleteEverythingFromCartItemsViaCartId,
     getCartItemsViaCartId,
-    decreaseProductQuantityInCart
+    decreaseProductQuantityInCart,
+    increaseProductQuantityInCart
 } from '../controllers/orderControllers.js';
 
 const router = express.Router();
@@ -29,5 +30,6 @@ router.route("/cart/get-cart-via-user-id").get( authenticateToken, extractIdFrom
 router.route("/cart/delete-everything-via-cart-id").delete( authenticateToken, deleteEverythingFromCartItemsViaCartId );
 router.route("/cart/get-cart-items-via-cart-id").post( authenticateToken, getCartItemsViaCartId );
 router.route("/cart/decrease-product-quantity-in-cart").post( authenticateToken, decreaseProductQuantityInCart );
+router.route("/cart/increase-product-quantity-in-cart").post( authenticateToken, increaseProductQuantityInCart );
 
 export default router;
