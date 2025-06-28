@@ -322,7 +322,7 @@ const decreaseProductQuantityInCartData = async (cartItemId, cartId, productId) 
             .input('productId', UniqueIdentifier, productId)
             .query(sqlQueries.getProductQuantityInCart);
 
-        if (existingCartItem.recordset[0].Quantity !== 0 && existingCartItem.recordset[0].Quantity > 1) {
+        if (existingCartItem.recordset[0]?.Quantity !== 0 && existingCartItem.recordset[0]?.Quantity > 1) {
             const quantity = existingCartItem.recordset[0].Quantity - 1;
 
             await pool.request()
@@ -331,13 +331,13 @@ const decreaseProductQuantityInCartData = async (cartItemId, cartId, productId) 
                 .input('cartItemId', Int, cartItemId)
                 .input('productId', UniqueIdentifier, productId)
                 .query(sqlQueries.updateProductQuantityInCart);
-        } else if (existingCartItem.recordset[0].Quantity === 1) {
+        } else if (existingCartItem.recordset[0]?.Quantity === 1) {
 
             await pool.request()
                 .input('cartItemId', Int, cartItemId)
                 .query(sqlQueries.deleteCartItemFromCartItems);
 
-        } else {
+        } else if (existingCartItem.recordset.length === 0) {
             return "Quantity is equal to zero";
         }
     } catch (error) {
