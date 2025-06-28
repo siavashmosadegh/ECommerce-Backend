@@ -345,9 +345,9 @@ const decreaseProductQuantityInCartData = async (cartItemId, cartId, productId) 
     }
 }
 
-const increaseProductQuantityInCartData = async (cartItemId, cartId, productId) => {
+const increaseProductQuantityInCartData = async (cartId, productId) => {
     try {
-        let pool = await connect({
+        const pool = await connect({
             server: process.env.SQL_SERVER,
             user: process.env.SQL_USER,
             password: process.env.SQL_PASSWORD,
@@ -360,34 +360,36 @@ const increaseProductQuantityInCartData = async (cartItemId, cartId, productId) 
 
         const sqlQueries = await loadSqlQueries('orders');
 
-        const existingCartItem = await pool.request()
+        const checkExisting = await pool.request()
             .input('cartId', UniqueIdentifier, cartId)
-            .input('cartItemId', Int, cartItemId)
             .input('productId', UniqueIdentifier, productId)
             .query(sqlQueries.getProductQuantityInCart);
 
-        console.log(existingCartItem.recordset[0]);
+        const existingItem = checkExisting.recordset[0];
 
-        if (existingCartItem.recordset[0].Quantity !== 0) {
-            const quantity = existingCartItem.recordset[0].Quantity + 1;
+        if (existingItem) {
+            // Item exists → increase quantity
+            const newQuantity = existingItem.Quantity + 1;
 
             await pool.request()
-                .input('quantity', Int, quantity)
-                .input('cartId', UniqueIdentifier, cartId)
-                .input('cartItemId', Int, cartItemId)
-                .input('productId', UniqueIdentifier, productId)
+                .input('quantity', Int, newQuantity)
+                .input('cartItemId', Int, existingItem.CartItemId)  // use ID from DB
                 .query(sqlQueries.updateProductQuantityInCart);
         } else {
+            // Item doesn't exist → insert new with quantity = 1
             await pool.request()
                 .input('cartId', UniqueIdentifier, cartId)
-                .input('quantity', Int, 1)
                 .input('productId', UniqueIdentifier, productId)
+                .input('quantity', Int, 1)
                 .query(sqlQueries.insertIntoCartItemsForQuantityEqualToZero);
         }
+
+        return { message: 'Quantity updated or product added.' };
     } catch (error) {
-        return error.message
+        console.error('Error updating cart quantity:', error);
+        throw new Error(error.message);
     }
-}
+};
 
 export {
     placeNewOrderData,

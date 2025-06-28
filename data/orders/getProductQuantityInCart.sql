@@ -1,8 +1,7 @@
 use mydatabase;
 
-SELECT [Quantity]
+SELECT [Quantity], [CartItemId]
 FROM [dbo].[CartItems]
-Where 
-    [CartItemId] = @cartItemId AND
+Where
     [CartId] = @cartId AND
     [ProductID] = @productId

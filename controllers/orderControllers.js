@@ -150,11 +150,11 @@ const decreaseProductQuantityInCart = catchAsyncErrors (async (req, res) => {
 });
 
 const increaseProductQuantityInCart = catchAsyncErrors (async (req, res) => {
-    const cartItemId = req.body.cartItemId;
+    //const cartItemId = req.body.cartItemId;
     const cartId = req.body.cartId;
     const productId = req.body.productId;
 
-    const result = await increaseProductQuantityInCartData(cartItemId, cartId, productId);
+    const result = await increaseProductQuantityInCartData(cartId, productId);
 
     res.json({
         result
