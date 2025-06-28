@@ -360,15 +360,24 @@ const increaseProductQuantityInCartData = async (cartItemId, cartId, productId) 
             .input('productId', UniqueIdentifier, productId)
             .query(sqlQueries.getProductQuantityInCart);
 
-        const quantity = existingCartItem.recordset[0].Quantity + 1;
+        console.log(existingCartItem.recordset[0]);
 
-        await pool.request()
-            .input('quantity', Int, quantity)
-            .input('cartId', UniqueIdentifier, cartId)
-            .input('cartItemId', Int, cartItemId)
-            .input('productId', UniqueIdentifier, productId)
-            .query(sqlQueries.updateProductQuantityInCart);
+        if (existingCartItem.recordset[0].Quantity !== 0) {
+            const quantity = existingCartItem.recordset[0].Quantity + 1;
 
+            await pool.request()
+                .input('quantity', Int, quantity)
+                .input('cartId', UniqueIdentifier, cartId)
+                .input('cartItemId', Int, cartItemId)
+                .input('productId', UniqueIdentifier, productId)
+                .query(sqlQueries.updateProductQuantityInCart);
+        } else {
+            await pool.request()
+                .input('cartId', UniqueIdentifier, cartId)
+                .input('quantity', Int, 1)
+                .input('productId', UniqueIdentifier, productId)
+                .query(sqlQueries.insertIntoCartItemsForQuantityEqualToZero);
+        }
     } catch (error) {
         return error.message
     }
