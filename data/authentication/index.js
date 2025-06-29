@@ -6,11 +6,12 @@ import {loadSqlQueries} from '../utils.js';
 import pkg from 'mssql';
 import pkg2 from 'bcryptjs';
 import pkg3 from 'jsonwebtoken';
-const {connect,sql,NVarChar,DateTime,Int,Request} = pkg;
+const {connect,sql,NVarChar,DateTime,Int,Request,DateTimeOffset} = pkg;
 const {hash, compare, compareSync} = pkg2;
 const {sign} = pkg3;
 import { v4 as uuidv4 } from 'uuid';
 import sendResetEmail from '../../middlewares/email.js';
+import axios from 'axios';
 
 const registerUsersData = async (username, email, password) => {
     try {
@@ -457,6 +458,82 @@ const loginUsersWithPhoneData = async (phoneNumber) => {
     }
 }
 
+const loginRequestOTPData = async (phoneNumber) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        //check if user DOES NOT exist
+        const existingUser = await pool.request()
+            .input('phoneNumber', NVarChar(20), phoneNumber)
+            .query(sqlQueries.checkUserExistanceViaPhoneNumber);
+
+        if (existingUser.recordset.length === 0 ) {
+            return "User Does Not Exist";
+        }
+
+        //const userId = existingUser.recordset[0].UserID;
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 3 * 60 * 1000).toISOString();
+
+        //console.log(new Date(Date.now()));
+
+        await pool.request()
+            .input("phoneNumber", NVarChar(20), phoneNumber)
+            .input("otpCode", NVarChar(10), otp)
+            .input("expiresAt", DateTimeOffset, expiresAt)
+            .query(sqlQueries.insertIntoOTPs);
+
+        //await sendOTP(phoneNumber, otp);
+
+        const API_KEY = "1IC5R2XsGEAXjcqPVXJ8SMHLGyfDUYcizfmYsnjEFa2j9xBr";
+        const PATTERN_CODE = "780121";
+
+        try {
+            const response = await axios.post(
+                "https://api.sms.ir/v1/send/verify",
+                {
+                    mobile: phoneNumber,
+                    templateId: PATTERN_CODE,
+                    parameters: [{
+                        name: "Code",
+                        value: otp
+                    }]
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "X-API-KEY": API_KEY
+                    }
+                }
+            );
+
+            console.log("SMS sent:", response.data);
+            return true;
+        } catch (error) {
+            console.error("SMS sending error:", error.response?.data || error.message);
+            return false;
+        }
+
+        return "OTP sent";
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     registerUsersData,
     loginUsersData,
@@ -468,5 +545,6 @@ export {
     getUserData,
     deleteUserData,
     updateUserData,
-    loginUsersWithPhoneData
+    loginUsersWithPhoneData,
+    loginRequestOTPData
 }

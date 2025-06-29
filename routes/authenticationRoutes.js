@@ -10,7 +10,8 @@ import {
     getUser,
     deleteUser,
     updateUser,
-    loginUsersWithPhone
+    loginUsersWithPhone,
+    loginRequestOTP
 } from "../controllers/authenticationControllers.js";
 import {
     authenticateToken,
@@ -35,5 +36,7 @@ router.route("/admin/delete-user/:id").delete( authenticateToken, authorizeRoles
 router.route("/admin/update-user/:id").patch( authenticateToken, authorizeRoles("admin"), updateUser);
 
 router.route("/login/via-phone").post( validatePhoneNumber, loginUsersWithPhone);
+
+router.route("/login/request-otp").post( validatePhoneNumber, loginRequestOTP );
 
 export default router;

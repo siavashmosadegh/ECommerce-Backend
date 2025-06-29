@@ -9,7 +9,8 @@ import {
     getUserData,
     deleteUserData,
     updateUserData,
-    loginUsersWithPhoneData
+    loginUsersWithPhoneData,
+    loginRequestOTPData
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -200,7 +201,23 @@ const loginUsersWithPhone = catchAsyncErrors( async (req, res) => {
             message: result
         })
     }
-})
+});
+
+const loginRequestOTP = catchAsyncErrors( async (req, res) => {
+    const phoneNumber = req.body.mobile;
+
+    const result = await loginRequestOTPData(phoneNumber);
+
+    if (result === "User Does Not Exist") {
+        res.status(404).json({
+            message: "User Does Not Exist"
+        })
+    } else {
+        res.json({
+            result
+        });
+    }
+});
 
 export {
     registerUsers,
@@ -213,5 +230,6 @@ export {
     getUser,
     deleteUser,
     updateUser,
-    loginUsersWithPhone
+    loginUsersWithPhone,
+    loginRequestOTP
 }
