@@ -1,10 +1,12 @@
 use mydatabase;
 
 CREATE TABLE [dbo].[OTPs] (
-    otpId INT IDENTITY(1,1) PRIMARY KEY,
-    phoneNumber NVARCHAR(20) NOT NULL,
+    otpId INT PRIMARY KEY IDENTITY,
+    userId INT,
     otpCode NVARCHAR(10) NOT NULL,
+    phoneNumber NVARCHAR(20) NOT NULL,
     createdAt DATETIME NOT NULL DEFAULT GETDATE(),
     expiresAt DATETIME NOT NULL,
-    isUsed BIT NOT NULL DEFAULT 0
+    isUsed BIT DEFAULT 0,
+    FOREIGN KEY (userId) REFERENCES Users(UserID)
 );
