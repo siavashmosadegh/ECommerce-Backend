@@ -585,8 +585,7 @@ const loginVerifyOTPData = async (phoneNumber, otpCode) => {
             token,
             user: {
                 id: user.UserID,
-                phoneNumber: user.PhoneNumber,
-                firstName: user.FirstName, // در صورت وجود
+                phoneNumber: user.PhoneNumber
             },
         };
 
