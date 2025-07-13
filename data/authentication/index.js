@@ -496,26 +496,26 @@ const loginRequestOTPData = async (phoneNumber) => {
         const API_KEY = process.env.SMS_IR_API_KEY;
         const PATTERN_CODE = process.env.SMS_IR_PATTERN_CODE;
 
-        const response = await axios.post(
-            "https://api.sms.ir/v1/send/verify",
-            {
-                mobile: phoneNumber,
-                templateId: PATTERN_CODE,
-                parameters: [{
-                name: "Code",
-                value: otp
-                }]
-            },
-            {
-                headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-API-KEY": API_KEY
-                }
-            }
-        );
+        // const response = await axios.post(
+        //     "https://api.sms.ir/v1/send/verify",
+        //     {
+        //         mobile: phoneNumber,
+        //         templateId: PATTERN_CODE,
+        //         parameters: [{
+        //         name: "Code",
+        //         value: otp
+        //         }]
+        //     },
+        //     {
+        //         headers: {
+        //         "Content-Type": "application/json",
+        //         "Accept": "application/json",
+        //         "X-API-KEY": API_KEY
+        //         }
+        //     }
+        // );
 
-        console.log("SMS sent:", response.data);
+        //console.log("SMS sent:", response.data);
         return {
             success: true,
             message: "OTP Sent",
@@ -530,81 +530,74 @@ const loginRequestOTPData = async (phoneNumber) => {
     }
 };
 
+const loginVerifyOTPData = async (phoneNumber, otpCode) => {
+    try {
+        const pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true,
+            },
+        });
 
-// const loginRequestOTPData = async (phoneNumber) => {
-//     try {
-//         let pool = await connect({
-//             server: process.env.SQL_SERVER,
-//             user: process.env.SQL_USER,
-//             password: process.env.SQL_PASSWORD,
-//             database: process.env.SQL_DATABASE,
-//             options: {
-//                 encrypt: false,
-//                 enableArithAbort: true
-//             }
-//         });
+        const sqlQueries = await loadSqlQueries("authentication");
 
-//         const sqlQueries = await loadSqlQueries('authentication');
+        // ۱. پیدا کردن OTP معتبر و استفاده‌نشده و تاریخ معتبر
+        const result = await pool.request()
+            .input("phoneNumber", NVarChar(20), phoneNumber)
+            .input("otpCode", NVarChar(10), otpCode)
+            .query(sqlQueries.getOTP);
 
-//         //check if user DOES NOT exist
-//         const existingUser = await pool.request()
-//             .input('phoneNumber', NVarChar(20), phoneNumber)
-//             .query(sqlQueries.checkUserExistanceViaPhoneNumber);
+        if (result.recordset.length === 0) {
+            return { success: false, message: "کد تأیید نامعتبر یا منقضی شده است" };
+        }
 
-//         if (existingUser.recordset.length === 0 ) {
-//             return "User Does Not Exist";
-//         }
+        const otpRow = result.recordset[0];
 
-//         //const userId = existingUser.recordset[0].UserID;
+        console.log("OTP Row: ", otpRow);
 
-//         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-//         const expiresAt = new Date(Date.now() + 3 * 60 * 1000).toISOString();
+        // ۲. غیرفعال‌سازی OTP
+        await pool.request()
+            .input("otpId", Int, otpRow.otpId)
+            .query(sqlQueries.invalidatingOTP);
 
-//         //console.log(new Date(Date.now()));
+        // ۳. پیدا کردن کاربر
+        const userResult = await pool.request()
+            .input("phoneNumber", NVarChar(20), phoneNumber)
+            .query(sqlQueries.checkUserExistanceViaPhoneNumber);
 
-//         await pool.request()
-//             .input("phoneNumber", NVarChar(20), phoneNumber)
-//             .input("otpCode", NVarChar(10), otp)
-//             .input("expiresAt", DateTimeOffset, expiresAt)
-//             .query(sqlQueries.insertIntoOTPs);
+        if (userResult.recordset.length === 0) {
+            return { success: false, message: "کاربری با این شماره یافت نشد" };
+        }
 
-//         //await sendOTP(phoneNumber, otp);
+        const user = userResult.recordset[0];
 
-//         const API_KEY = "1IC5R2XsGEAXjcqPVXJ8SMHLGyfDUYcizfmYsnjEFa2j9xBr";
-//         const PATTERN_CODE = "780121";
+        // ۴. تولید JWT
+        const token = sign({ id: user.UserID , phone: user.phoneNumber, }, process.env.JWT_SECRET, {
+            expiresIn: '1h'
+        })
 
-//         try {
-//             const response = await axios.post(
-//                 "https://api.sms.ir/v1/send/verify",
-//                 {
-//                     mobile: phoneNumber,
-//                     templateId: PATTERN_CODE,
-//                     parameters: [{
-//                         name: "Code",
-//                         value: otp
-//                     }]
-//                 },
-//                 {
-//                     headers: {
-//                         "Content-Type": "application/json",
-//                         "Accept": "application/json",
-//                         "X-API-KEY": API_KEY
-//                     }
-//                 }
-//             );
+        return {
+            success: true,
+            token,
+            user: {
+                id: user.UserID,
+                phoneNumber: user.PhoneNumber,
+                firstName: user.FirstName, // در صورت وجود
+            },
+        };
 
-//             console.log("SMS sent:", response.data);
-//         } catch (error) {
-//             console.error("SMS sending error:", error.response?.data || error.message);
-//             return false;
-//         }
-
-//         return "OTP sent";
-
-//     } catch (error) {
-//         return error.message;
-//     }
-// }
+    } catch (error) {
+        console.error("verifyOTP error:", error);
+        return {
+            success: false,
+            message: "خطای داخلی سرور"
+        };
+    }
+};
 
 export {
     registerUsersData,
@@ -618,5 +611,6 @@ export {
     deleteUserData,
     updateUserData,
     loginUsersWithPhoneData,
-    loginRequestOTPData
+    loginRequestOTPData,
+    loginVerifyOTPData
 }
