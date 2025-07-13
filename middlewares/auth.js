@@ -66,9 +66,22 @@ const validatePhoneNumber = (req, res, next) => {
     next(); // phone number is valid
 };
 
+const validateOTPCode = (req, res, next) => {
+    const { otp } = req.body;
+
+    if (!otp || typeof otp !== "string" || otp.length !== 6) {
+        return res.status(400).json({ message: "کد تأیید معتبر نیست" });
+    }
+    // If the OTP is valid, proceed to the next middleware
+    //req.otpCode = otp;  Store the OTP code in the request object for further
+    next();
+};
+
+
 export {
     authenticateToken,
     authorizeRoles,
     extractIdFromToken,
-    validatePhoneNumber
+    validatePhoneNumber,
+    validateOTPCode
 }
