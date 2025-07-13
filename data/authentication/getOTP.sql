@@ -5,5 +5,6 @@ WHERE
     phoneNumber = @phoneNumber
     AND otpCode = @otpCode
     AND isUsed = 0
-    AND expiresAt >= SYSDATETIME()
+    AND expiresAt >= SYSDATETIMEOFFSET()
+
 ORDER BY otpId DESC
