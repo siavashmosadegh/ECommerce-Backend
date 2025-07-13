@@ -203,21 +203,18 @@ const loginUsersWithPhone = catchAsyncErrors( async (req, res) => {
     }
 });
 
-const loginRequestOTP = catchAsyncErrors( async (req, res) => {
+const loginRequestOTP = catchAsyncErrors(async (req, res) => {
     const phoneNumber = req.body.mobile;
 
     const result = await loginRequestOTPData(phoneNumber);
 
-    if (result === "User Does Not Exist") {
-        res.status(404).json({
-            message: "User Does Not Exist"
-        })
-    } else {
-        res.json({
-            result
-        });
+    if (!result.success) {
+        return res.status(400).json({ message: result.message });
     }
+
+    return res.status(200).json({ message: result.message });
 });
+
 
 export {
     registerUsers,
