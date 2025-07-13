@@ -11,13 +11,15 @@ import {
     deleteUser,
     updateUser,
     loginUsersWithPhone,
-    loginRequestOTP
+    loginRequestOTP,
+    loginVerifyOTP
 } from "../controllers/authenticationControllers.js";
 import {
     authenticateToken,
     authorizeRoles,
     extractIdFromToken,
-    validatePhoneNumber
+    validatePhoneNumber,
+    validateOTPCode,
 } from '../middlewares/auth.js';
 
 const router = express.Router();
@@ -38,5 +40,6 @@ router.route("/admin/update-user/:id").patch( authenticateToken, authorizeRoles(
 router.route("/login/via-phone").post( validatePhoneNumber, loginUsersWithPhone);
 
 router.route("/login/request-otp").post( validatePhoneNumber, loginRequestOTP );
+router.route("/login/verify-otp").post(validatePhoneNumber, validateOTPCode, loginVerifyOTP);
 
 export default router;

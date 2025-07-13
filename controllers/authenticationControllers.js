@@ -10,7 +10,8 @@ import {
     deleteUserData,
     updateUserData,
     loginUsersWithPhoneData,
-    loginRequestOTPData
+    loginRequestOTPData,
+    loginVerifyOTPData
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -215,6 +216,19 @@ const loginRequestOTP = catchAsyncErrors(async (req, res) => {
     return res.status(200).json({ message: result.message });
 });
 
+const loginVerifyOTP = catchAsyncErrors(async (req, res) => {
+    const { mobile, otp } = req.body;
+
+    const result = await loginVerifyOTPData(mobile, otp);
+
+    if (!result.success) {
+        return res.status(400).json({ message: result.message });
+    }
+
+    return res.status(200).json({ message: "ورود موفق", token: result.token });
+});
+
+
 
 export {
     registerUsers,
@@ -228,5 +242,6 @@ export {
     deleteUser,
     updateUser,
     loginUsersWithPhone,
-    loginRequestOTP
+    loginRequestOTP,
+    loginVerifyOTP
 }
