@@ -127,8 +127,8 @@ const getCartItemsViaCartId = catchAsyncErrors( async (req, res) => {
     const result = await getCartItemsViaCartIdData(cartId);
 
     if (result === "There is no product added to Cart") {
-        res.status(204).json({
-            message: "There is no product added to Cart"
+        res.status(200).json({
+            result: []
         })
     } else {
         res.status(200).json({
