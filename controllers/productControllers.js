@@ -31,7 +31,8 @@ import {
     getCategoryByProductIDData,
     getProductTypeByProductIdData,
     getCarByProductIdData,
-    getProductsBasedOnCarViaCategoryIDData
+    getProductsBasedOnCarViaCategoryIDData,
+    getProductsBulkData
 } from "../data/products/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -523,6 +524,25 @@ const getProductsBasedOnCar = catchAsyncErrors( async (req, res) => {
     }
 })
 
+const getProductsBulk = catchAsyncErrors( async (req, res) => {
+    try {
+        const { ids } = req.body;
+
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ message: 'Invalid or empty product ID list' });
+        }
+        // Assuming getProductsBulkData is a function that fetches products based on the provided IDs
+
+        const products = await getProductsBulkData(ids);
+
+        res.json({
+            products
+        });
+    } catch (error) {
+        return error.message;
+    }
+})
+
 export {
     getProducts,
     createProducts,
@@ -557,5 +577,6 @@ export {
     getProductTypeByProductId,
     getCarByProductId,
     getProductsBasedOnCarViaCategoryID,
-    getProductsBasedOnCar
+    getProductsBasedOnCar,
+    getProductsBulk
 }

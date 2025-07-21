@@ -33,7 +33,8 @@ import {
     getProductTypeByProductId,
     getCarByProductId,
     getProductsBasedOnCarViaCategoryID,
-    getProductsBasedOnCar
+    getProductsBasedOnCar,
+    getProductsBulk
 } from "../controllers/productControllers.js";
 import {
     authenticateToken,
@@ -51,6 +52,7 @@ router.route("/admin/products").post( authenticateToken, authorizeRoles("admin")
 router.route("/products/:id").get(getProductDetails);
 router.route("/admin/products/:id").put( authenticateToken, authorizeRoles("admin") , updateProduct);
 router.route("/admin/products/:id").delete(authenticateToken, authorizeRoles("admin") , deleteProduct);
+router.route("/products/bulk").post(getProductsBulk)
 
 router.route("/products/:productId/reviews").get( getReviewsOfOneProduct );
 

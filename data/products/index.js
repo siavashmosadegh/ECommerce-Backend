@@ -1097,6 +1097,47 @@ const getProductsBasedOnCarViaCategoryIDData = async (categoryID) => {
     }
 }
 
+const getProductsBulkData = async (ids) => {
+    try {
+        const pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        // Use parameterized query for safety
+
+        const idParams = ids.map((_, idx) => `@id${idx}`).join(',');
+        const request = pool.request();
+
+        //console.log(`idParams: ${idParams}`);
+        //console.log(`idParams.length : ${idParams.length}`);
+
+        ids.forEach((id, idx) => {
+            console.log(`id : ${id}`);
+            console.log(`idx : ${idx}`);
+            request.input(`id${idx}`, UniqueIdentifier, id);
+        });
+
+        const result = await request.query(`
+            use mydatabase
+            SELECT *
+            FROM [dbo].[Product]
+            WHERE [ProductID] IN (${idParams})
+        `);
+
+        return (result.recordset);
+
+    } catch {
+        console.log(error);
+    }
+}
+
 export {
     getProductsData,
     createNewProduct,
@@ -1130,5 +1171,6 @@ export {
     getCategoryByProductIDData,
     getProductTypeByProductIdData,
     getCarByProductIdData,
-    getProductsBasedOnCarViaCategoryIDData
+    getProductsBasedOnCarViaCategoryIDData,
+    getProductsBulkData
 }
