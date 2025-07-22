@@ -4,11 +4,13 @@ INSERT INTO [dbo].[OTPs]
     (
         [otpCode],
         [phoneNumber],
-        [expiresAt]
+        [expiresAt],
+        [UserID]
 )
 VALUES
     (
         @otpCode,
         @phoneNumber,
-        @expiresAt
+        @expiresAt,
+        @userId
 )

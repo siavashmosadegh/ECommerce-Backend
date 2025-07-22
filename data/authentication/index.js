@@ -484,6 +484,7 @@ const loginRequestOTPData = async (phoneNumber) => {
             };
         }
 
+        const userId = await existingUser.recordset[0].UserID;
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 3 * 60 * 1000).toISOString();
 
@@ -491,6 +492,7 @@ const loginRequestOTPData = async (phoneNumber) => {
             .input("phoneNumber", NVarChar(20), phoneNumber)
             .input("otpCode", NVarChar(10), otp)
             .input("expiresAt", DateTimeOffset, expiresAt)
+            .input("userId", Int, userId)
             .query(sqlQueries.insertIntoOTPs);
 
         const API_KEY = process.env.SMS_IR_API_KEY;
