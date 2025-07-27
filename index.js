@@ -23,6 +23,7 @@ import productRoutes from './routes/productRoutes.js';
 import authenticationRoutes from './routes/authenticationRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import userReviewsRoutes from './routes/userReviewsRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import {authenticateToken} from './middlewares/auth.js';
 
 app.use(bodyParser.json());
@@ -30,6 +31,7 @@ app.use("/api/v1", productRoutes);
 app.use("/api/v1", authenticationRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", userReviewsRoutes);
+app.use("/api/v1", userRoutes.js);
 app.get('/api/v1/protecteed', authenticateToken, (req, res) => {
     res.json({ user: req.user });
 });
