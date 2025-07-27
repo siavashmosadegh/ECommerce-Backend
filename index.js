@@ -31,7 +31,7 @@ app.use("/api/v1", productRoutes);
 app.use("/api/v1", authenticationRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", userReviewsRoutes);
-app.use("/api/v1", userRoutes.js);
+app.use("/api/v1", userRoutes);
 app.get('/api/v1/protecteed', authenticateToken, (req, res) => {
     res.json({ user: req.user });
 });
