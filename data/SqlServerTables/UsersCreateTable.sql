@@ -1,20 +1,32 @@
-CREATE TABLE [dbo].[Users] (
-    [UserID]             INT            IDENTITY (1, 1) NOT NULL,
-    [UserName]           NVARCHAR (100) NOT NULL,
-    [Email]              NVARCHAR (255) NOT NULL,
-    [PasswordHash]       NVARCHAR (255) NOT NULL,
-    [FirstName]          NVARCHAR (100) NULL,
-    [PhoneNumber]        NVARCHAR (20)  NULL,
-    [AddressLine1]       NVARCHAR (255) NULL,
-    [AddressLine2]       NVARCHAR (255) NULL,
-    [City]               NVARCHAR (100) NULL,
-    [State]              NVARCHAR (100) NULL,
-    [ZipCode]            NVARCHAR (20)  NULL,
-    [Country]            NVARCHAR (100) NULL,
-    [CreatedAt]          DATETIME       NULL DEFAULT (getdate()),
-    [UpdatedAt]          DATETIME       NULL,
-    [reset_token]        NVARCHAR (255) NULL,
-    [reset_token_expiry] DATETIME       NULL,
-    [Role]               NVARCHAR (255) NULL,
-    PRIMARY KEY CLUSTERED ([UserID] ASC)
-);
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[UserID] [int] IDENTITY(1,1) NOT NULL,
+	[UserName] [nvarchar](100) NOT NULL,
+	[Email] [nvarchar](255) NOT NULL,
+	[PasswordHash] [nvarchar](255) NOT NULL,
+	[FirstName] [nvarchar](100) NULL,
+	[PhoneNumber] [nvarchar](20) NULL,
+	[AddressLine1] [nvarchar](255) NULL,
+	[AddressLine2] [nvarchar](255) NULL,
+	[City] [nvarchar](100) NULL,
+	[State] [nvarchar](100) NULL,
+	[ZipCode] [nvarchar](20) NULL,
+	[Country] [nvarchar](100) NULL,
+	[UpdatedAt] [datetime] NULL,
+	[reset_token] [nvarchar](255) NULL,
+	[reset_token_expiry] [datetime] NULL,
+	[Role] [nvarchar](255) NULL,
+	[CreatedAt] [datetime] NULL,
+	[LastName] [nvarchar](100) NULL
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Users] ADD PRIMARY KEY CLUSTERED 
+(
+	[UserID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Users] ADD  DEFAULT (getdate()) FOR [CreatedAt]
+GO
