@@ -4,7 +4,6 @@ import {
     loginUsers,
     forgotPassword,
     resetPassword,
-    getUserProfile,
     updatePassword,
     getAllUsers,
     getUser,
@@ -29,7 +28,7 @@ router.route("/login/via-user-pass").post(loginUsers);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password").post(resetPassword);
 
-router.route("/user-profile").get( authenticateToken, extractIdFromToken, getUserProfile);
+
 router.route("/update-password").post( authenticateToken, extractIdFromToken, updatePassword);
 
 router.route("/admin/get-all-users").get(authenticateToken, authorizeRoles("admin"), getAllUsers);

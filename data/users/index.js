@@ -34,6 +34,37 @@ const updateProfileNameData = async (firstName , lastName, userId) => {
     }
 }
 
+const getUserProfileData = async (userId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        console.log(userId);
+
+        const record = await pool.request()
+            .input("userId", Int, userId)
+            .query(sqlQueries.getUserViaUserID);
+        
+        console.log(record);
+
+        return record.recordset[0];
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
-    updateProfileNameData
+    updateProfileNameData,
+    getUserProfileData
 }

@@ -3,7 +3,6 @@ import {
     loginUsersData,
     forgotPasswordData,
     resetPasswordData,
-    getUserProfileData,
     updatePasswordData,
     getAllUsersData,
     getUserData,
@@ -83,17 +82,6 @@ const resetPassword = catchAsyncErrors( async (req, res) => {
     } else {
         res.json({ message: result })
     }
-})
-
-const getUserProfile = catchAsyncErrors( async (req, res) => {
-    
-    let result = await getUserProfileData(req.userId);
-
-    console.log(result);
-
-    res.status(200).json({
-        user: result
-    });
 })
 
 const updatePassword = catchAsyncErrors( async (req, res) => {
@@ -235,7 +223,6 @@ export {
     loginUsers,
     forgotPassword,
     resetPassword,
-    getUserProfile,
     updatePassword,
     getAllUsers,
     getUser,

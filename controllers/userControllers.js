@@ -1,6 +1,7 @@
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import {
     updateProfileNameData,
+    getUserProfileData
 } from "../data/users/index.js";
 
 const updateProfileName = catchAsyncErrors(async (req, res) => {
@@ -17,6 +18,18 @@ const updateProfileName = catchAsyncErrors(async (req, res) => {
 
 });
 
+const getUserProfile = catchAsyncErrors( async (req, res) => {
+    
+    let result = await getUserProfileData(req.userId);
+
+    console.log(result);
+
+    res.status(200).json({
+        user: result
+    });
+})
+
 export {
-    updateProfileName
+    updateProfileName,
+    getUserProfile
 }
