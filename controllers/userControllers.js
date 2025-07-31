@@ -3,7 +3,8 @@ import {
     updateProfileNameData,
     getUserProfileData,
     addAddressData,
-    updateBirthInfoData
+    updateBirthInfoData,
+    updateNationalCodeData
 } from "../data/users/index.js";
 
 const updateProfileName = catchAsyncErrors(async (req, res) => {
@@ -66,9 +67,25 @@ const updateBirthInfo = catchAsyncErrors( async (req, res) => {
     });
 });
 
+const updateNationalCode = catchAsyncErrors( async (req, res) => {
+
+    const {
+        nationalCode 
+    } = req.body;
+
+    const userId = req.userId;
+
+    let result = await updateNationalCodeData(nationalCode, userId);
+
+    res.json({
+        result
+    })
+})
+
 export {
     updateProfileName,
     getUserProfile,
     addAddress,
-    updateBirthInfo
+    updateBirthInfo,
+    updateNationalCode
 }

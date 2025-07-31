@@ -127,9 +127,39 @@ const updateBirthInfoData = async (birthDay, birthMonth, birthYear, userId) => {
     }
 }
 
+const updateNationalCodeData = async (nationalCode , userId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const usersSqlQueries = await loadSqlQueries('users');
+
+        const result = await pool.request()
+            .input('userId', Int, userId)
+            .input('nationalCode', NVarChar(10), nationalCode)
+            .query(usersSqlQueries.updateNationalCode);
+
+        console.log(result);
+
+        return result.recordset;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     updateProfileNameData,
     getUserProfileData,
     addAddressData,
-    updateBirthInfoData
+    updateBirthInfoData,
+    updateNationalCodeData
 }

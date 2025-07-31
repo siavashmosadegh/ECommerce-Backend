@@ -8,7 +8,8 @@ import {
     updateProfileName,
     getUserProfile,
     addAddress,
-    updateBirthInfo
+    updateBirthInfo,
+    updateNationalCode
 } from '../controllers/userControllers.js';
 
 const router = express.Router();
@@ -20,5 +21,7 @@ router.route("/profile/get-user-profile").get( authenticateToken, extractIdFromT
 router.route("/profile/addresses/add-address").post( authenticateToken, extractIdFromToken, addAddress );
 
 router.route("/profile/personal-info/update-birth-info").post( authenticateToken, extractIdFromToken, updateBirthInfo );
+
+router.route("/profile/personal-info/update-national-code").post ( authenticateToken, extractIdFromToken, updateNationalCode );
 
 export default router;
