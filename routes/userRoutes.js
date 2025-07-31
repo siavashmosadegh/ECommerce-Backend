@@ -6,7 +6,8 @@ import {
 
 import {
     updateProfileName,
-    getUserProfile
+    getUserProfile,
+    addAddress
 } from '../controllers/userControllers.js';
 
 const router = express.Router();
@@ -14,5 +15,7 @@ const router = express.Router();
 router.route("/profile/personal-info/update-name").post( authenticateToken, extractIdFromToken, updateProfileName);
 
 router.route("/profile/get-user-profile").get( authenticateToken, extractIdFromToken, getUserProfile);
+
+router.route("/profile/addresses/add-address").post( authenticateToken, extractIdFromToken, addAddress );
 
 export default router;

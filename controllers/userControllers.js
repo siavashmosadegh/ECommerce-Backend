@@ -1,7 +1,8 @@
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import {
     updateProfileNameData,
-    getUserProfileData
+    getUserProfileData,
+    addAddressData
 } from "../data/users/index.js";
 
 const updateProfileName = catchAsyncErrors(async (req, res) => {
@@ -27,9 +28,28 @@ const getUserProfile = catchAsyncErrors( async (req, res) => {
     res.status(200).json({
         user: result
     });
+});
+
+const addAddress = catchAsyncErrors( async (req, res) => {
+
+    const {
+        postalAddress, // آدرس پستی
+        addressHouseNumber, // پلاک
+        addressUnitNumber, // واحد
+        zipCode // کد پستی
+    } = req.body;
+
+    const userId = req.userId;
+
+    let result = await addAddressData(postalAddress, addressHouseNumber, addressUnitNumber, zipCode, userId);
+
+    res.json({
+        result
+    });
 })
 
 export {
     updateProfileName,
-    getUserProfile
+    getUserProfile,
+    addAddress
 }
