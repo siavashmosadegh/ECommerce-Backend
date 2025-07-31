@@ -9,8 +9,7 @@ CREATE TABLE [dbo].[Users](
 	[PasswordHash] [nvarchar](255) NOT NULL,
 	[FirstName] [nvarchar](100) NULL,
 	[PhoneNumber] [nvarchar](20) NULL,
-	[AddressLine1] [nvarchar](255) NULL,
-	[AddressLine2] [nvarchar](255) NULL,
+	[PostalAddress] [nvarchar](255) NULL,
 	[City] [nvarchar](100) NULL,
 	[State] [nvarchar](100) NULL,
 	[ZipCode] [nvarchar](20) NULL,
@@ -20,7 +19,13 @@ CREATE TABLE [dbo].[Users](
 	[reset_token_expiry] [datetime] NULL,
 	[Role] [nvarchar](255) NULL,
 	[CreatedAt] [datetime] NULL,
-	[LastName] [nvarchar](100) NULL
+	[LastName] [nvarchar](100) NULL,
+	[AddressHouseNumber] [int] NULL,
+	[AddressUnitNumber] [int] NULL,
+	[BirthDay] [int] NULL,
+	[BirthMonth] [int] NULL,
+	[BirthYear] [int] NULL,
+	[NationalCode] [nvarchar](10) NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Users] ADD PRIMARY KEY CLUSTERED 
