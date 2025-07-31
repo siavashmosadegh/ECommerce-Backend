@@ -2,7 +2,8 @@ import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import {
     updateProfileNameData,
     getUserProfileData,
-    addAddressData
+    addAddressData,
+    updateBirthInfoData
 } from "../data/users/index.js";
 
 const updateProfileName = catchAsyncErrors(async (req, res) => {
@@ -46,10 +47,28 @@ const addAddress = catchAsyncErrors( async (req, res) => {
     res.json({
         result
     });
-})
+});
+
+const updateBirthInfo = catchAsyncErrors( async (req, res) => {
+
+    const {
+        birthDay, // روز تولد
+        birthMonth, // ماه تولد
+        birthYear // سال تولد
+    } = req.body;
+
+    const userId = req.userId;
+
+    let result = await updateBirthInfoData(birthDay, birthMonth, birthYear, userId);
+
+    res.json({
+        result
+    });
+});
 
 export {
     updateProfileName,
     getUserProfile,
-    addAddress
+    addAddress,
+    updateBirthInfo
 }

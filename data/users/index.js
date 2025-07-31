@@ -96,8 +96,40 @@ const addAddressData = async (postalAddress, addressHouseNumber, addressUnitNumb
     }
 }
 
+const updateBirthInfoData = async (birthDay, birthMonth, birthYear, userId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const usersSqlQueries = await loadSqlQueries('users');
+
+        const result = await pool.request()
+            .input('userId', Int, userId)
+            .input('birthDay', Int, birthDay)
+            .input('birthMonth', Int, birthMonth)
+            .input('birthYear', Int,birthYear)
+            .query(usersSqlQueries.updateBirthInfo);
+
+        console.log(result);
+
+        return result.recordset;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 export {
     updateProfileNameData,
     getUserProfileData,
-    addAddressData
+    addAddressData,
+    updateBirthInfoData
 }
