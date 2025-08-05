@@ -384,7 +384,15 @@ const increaseProductQuantityInCartData = async (cartId, productId) => {
                 .query(sqlQueries.insertIntoCartItemsForQuantityEqualToZero);
         }
 
-        return { message: 'Quantity updated or product added.' };
+        const existingOrder = await pool.request()
+            .input('cartId', UniqueIdentifier, cartId)
+            .query(sqlQueries.getCartItemsViaCartID);
+
+        if (existingOrder.recordset.length === 0 ) {
+            return "There is no product available to Cart";
+        } else {
+            return existingOrder.recordset
+        }
     } catch (error) {
         console.error('Error updating cart quantity:', error);
         throw new Error(error.message);
