@@ -360,6 +360,7 @@ const increaseProductQuantityInCartData = async (cartId, productId) => {
 
         const sqlQueries = await loadSqlQueries('orders');
 
+        // 1️⃣ چک کنیم آیا محصول قبلاً توی سبد هست؟
         const checkExisting = await pool.request()
             .input('cartId', UniqueIdentifier, cartId)
             .input('productId', UniqueIdentifier, productId)
@@ -368,15 +369,14 @@ const increaseProductQuantityInCartData = async (cartId, productId) => {
         const existingItem = checkExisting.recordset[0];
 
         if (existingItem) {
-            // Item exists → increase quantity
+            // افزایش تعداد
             const newQuantity = existingItem.Quantity + 1;
-
             await pool.request()
                 .input('quantity', Int, newQuantity)
-                .input('cartItemId', Int, existingItem.CartItemId)  // use ID from DB
+                .input('cartItemId', Int, existingItem.CartItemId)
                 .query(sqlQueries.updateProductQuantityInCart);
         } else {
-            // Item doesn't exist → insert new with quantity = 1
+            // محصول جدید → تعداد = 1
             await pool.request()
                 .input('cartId', UniqueIdentifier, cartId)
                 .input('productId', UniqueIdentifier, productId)
@@ -384,20 +384,95 @@ const increaseProductQuantityInCartData = async (cartId, productId) => {
                 .query(sqlQueries.insertIntoCartItemsForQuantityEqualToZero);
         }
 
-        const existingOrder = await pool.request()
+        // 2️⃣ گرفتن کل سبد با جزییات محصول
+        const fullCart = await pool.request()
             .input('cartId', UniqueIdentifier, cartId)
-            .query(sqlQueries.getCartItemsViaCartID);
+            .query(sqlQueries.getFullCartViaCartID);
 
-        if (existingOrder.recordset.length === 0 ) {
-            return "There is no product available to Cart";
-        } else {
-            return existingOrder.recordset
+        if (fullCart.recordset.length === 0) {
+            return { message: "There is no product available in Cart" };
         }
+
+        // 3️⃣ ساختن خروجی JSON ساختارمند
+        const items = fullCart.recordset.map(row => ({
+            cartItemId: row.CartItemId,
+            productId: row.ProductID,
+            quantity: row.Quantity,
+            product: {
+                name: row.ProductName,
+                price: row.Price
+            }
+        }));
+
+        const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+        const totalPrice = items.reduce((sum, item) => sum + (item.quantity * item.product.price), 0);
+
+        return {
+            cartId,
+            totalItems,
+            totalPrice,
+            items
+        };
+
     } catch (error) {
         console.error('Error updating cart quantity:', error);
         throw new Error(error.message);
     }
 };
+
+// const increaseProductQuantityInCartData = async (cartId, productId) => {
+//     try {
+//         const pool = await connect({
+//             server: process.env.SQL_SERVER,
+//             user: process.env.SQL_USER,
+//             password: process.env.SQL_PASSWORD,
+//             database: process.env.SQL_DATABASE,
+//             options: {
+//                 encrypt: false,
+//                 enableArithAbort: true
+//             }
+//         });
+
+//         const sqlQueries = await loadSqlQueries('orders');
+
+//         const checkExisting = await pool.request()
+//             .input('cartId', UniqueIdentifier, cartId)
+//             .input('productId', UniqueIdentifier, productId)
+//             .query(sqlQueries.getProductQuantityInCart);
+
+//         const existingItem = checkExisting.recordset[0];
+
+//         if (existingItem) {
+//             // Item exists → increase quantity
+//             const newQuantity = existingItem.Quantity + 1;
+
+//             await pool.request()
+//                 .input('quantity', Int, newQuantity)
+//                 .input('cartItemId', Int, existingItem.CartItemId)  // use ID from DB
+//                 .query(sqlQueries.updateProductQuantityInCart);
+//         } else {
+//             // Item doesn't exist → insert new with quantity = 1
+//             await pool.request()
+//                 .input('cartId', UniqueIdentifier, cartId)
+//                 .input('productId', UniqueIdentifier, productId)
+//                 .input('quantity', Int, 1)
+//                 .query(sqlQueries.insertIntoCartItemsForQuantityEqualToZero);
+//         }
+
+//         const fullCart = await pool.request()
+//             .input('cartId', UniqueIdentifier, cartId)
+//             .query(sqlQueries.getFullCartViaCartID);
+
+//         if (existingOrder.recordset.length === 0 ) {
+//             return "There is no product available to Cart";
+//         } else {
+//             return existingOrder.recordset
+//         }
+//     } catch (error) {
+//         console.error('Error updating cart quantity:', error);
+//         throw new Error(error.message);
+//     }
+// };
 
 export {
     placeNewOrderData,
