@@ -395,84 +395,37 @@ const increaseProductQuantityInCartData = async (cartId, productId) => {
 
         // 3️⃣ ساختن خروجی JSON ساختارمند
         const items = fullCart.recordset.map(row => ({
-            cartItemId: row.CartItemId,
-            productId: row.ProductID,
-            quantity: row.Quantity,
-            product: {
-                name: row.ProductName,
-                price: row.Price
+            CartId : row.CartId,
+            CartItemId: row.CartItemId,
+            CreatedAt : row.CartItemCreatedAt,
+            ProductID : row.CartItemProductId,
+            Quantity : row.Quantity,
+            product : {
+                CarID : row.CarID,
+                CategoryID : row.CategoryID,
+                CreatedAt : row.ProductCreatedAt,
+                DeletedAt : row.DeletedAt,
+                Description : row.Description,
+                DiscountID : row.DiscountID,
+                ModifiedAt : row.ModifiedAt,
+                Price : row.Price,
+                ProductID : row.ProductID,
+                ProductInventoryID : row.ProductInventoryID, 
+                ProductName : row.ProductName,
+                ProductTypeBrandID : row.ProductTypeBrandID,
+                SKU : row.SKU, 
+                productIsOriginal : row.productIsOriginal,
+                productTypeID : row.productTypeID
             }
         }));
 
-        const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-        const totalPrice = items.reduce((sum, item) => sum + (item.quantity * item.product.price), 0);
-
-        return {
-            cartId,
-            totalItems,
-            totalPrice,
-            items
-        };
+        return items;
 
     } catch (error) {
         console.error('Error updating cart quantity:', error);
         throw new Error(error.message);
     }
 };
-
-// const increaseProductQuantityInCartData = async (cartId, productId) => {
-//     try {
-//         const pool = await connect({
-//             server: process.env.SQL_SERVER,
-//             user: process.env.SQL_USER,
-//             password: process.env.SQL_PASSWORD,
-//             database: process.env.SQL_DATABASE,
-//             options: {
-//                 encrypt: false,
-//                 enableArithAbort: true
-//             }
-//         });
-
-//         const sqlQueries = await loadSqlQueries('orders');
-
-//         const checkExisting = await pool.request()
-//             .input('cartId', UniqueIdentifier, cartId)
-//             .input('productId', UniqueIdentifier, productId)
-//             .query(sqlQueries.getProductQuantityInCart);
-
-//         const existingItem = checkExisting.recordset[0];
-
-//         if (existingItem) {
-//             // Item exists → increase quantity
-//             const newQuantity = existingItem.Quantity + 1;
-
-//             await pool.request()
-//                 .input('quantity', Int, newQuantity)
-//                 .input('cartItemId', Int, existingItem.CartItemId)  // use ID from DB
-//                 .query(sqlQueries.updateProductQuantityInCart);
-//         } else {
-//             // Item doesn't exist → insert new with quantity = 1
-//             await pool.request()
-//                 .input('cartId', UniqueIdentifier, cartId)
-//                 .input('productId', UniqueIdentifier, productId)
-//                 .input('quantity', Int, 1)
-//                 .query(sqlQueries.insertIntoCartItemsForQuantityEqualToZero);
-//         }
-
-//         const fullCart = await pool.request()
-//             .input('cartId', UniqueIdentifier, cartId)
-//             .query(sqlQueries.getFullCartViaCartID);
-
-//         if (existingOrder.recordset.length === 0 ) {
-//             return "There is no product available to Cart";
-//         } else {
-//             return existingOrder.recordset
-//         }
-//     } catch (error) {
-//         console.error('Error updating cart quantity:', error);
-//         throw new Error(error.message);
-//     }
-// };
 
 export {
     placeNewOrderData,
