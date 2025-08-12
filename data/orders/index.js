@@ -303,7 +303,7 @@ const getCartItemsViaCartIdData = async (cartId) => {
 
 const decreaseProductQuantityInCartData = async (cartItemId, cartId, productId) => {
     try {
-        let pool = await connect({
+        const pool = await connect({
             server: process.env.SQL_SERVER,
             user: process.env.SQL_USER,
             password: process.env.SQL_PASSWORD,
@@ -316,34 +316,120 @@ const decreaseProductQuantityInCartData = async (cartItemId, cartId, productId) 
 
         const sqlQueries = await loadSqlQueries('orders');
 
+        // 1️⃣ پیدا کردن آیتم موجود در سبد
         const existingCartItem = await pool.request()
             .input('cartId', UniqueIdentifier, cartId)
             .input('cartItemId', Int, cartItemId)
             .input('productId', UniqueIdentifier, productId)
             .query(sqlQueries.getProductQuantityInCart);
 
-        if (existingCartItem.recordset[0]?.Quantity !== 0 && existingCartItem.recordset[0]?.Quantity > 1) {
-            const quantity = existingCartItem.recordset[0].Quantity - 1;
+        const item = existingCartItem.recordset[0];
 
+        if (!item) {
+            return { message: "Product not found in cart" };
+        }
+
+        // 2️⃣ کم کردن تعداد یا حذف کامل آیتم
+        if (item.Quantity > 1) {
+            const quantity = item.Quantity - 1;
             await pool.request()
                 .input('quantity', Int, quantity)
                 .input('cartId', UniqueIdentifier, cartId)
                 .input('cartItemId', Int, cartItemId)
                 .input('productId', UniqueIdentifier, productId)
                 .query(sqlQueries.updateProductQuantityInCart);
-        } else if (existingCartItem.recordset[0]?.Quantity === 1) {
-
+        } else if (item.Quantity === 1) {
             await pool.request()
                 .input('cartItemId', Int, cartItemId)
                 .query(sqlQueries.deleteCartItemFromCartItems);
-
-        } else if (existingCartItem.recordset.length === 0) {
-            return "Quantity is equal to zero";
         }
+
+        // 3️⃣ گرفتن کل سبد با جزییات محصول
+        const fullCart = await pool.request()
+            .input('cartId', UniqueIdentifier, cartId)
+            .query(sqlQueries.getFullCartViaCartID);
+
+        if (fullCart.recordset.length === 0) {
+            return { message: "Cart is empty" };
+        }
+
+        // 4️⃣ ساختاردهی خروجی
+        const items = fullCart.recordset.map(row => ({
+            CartId : row.CartId,
+            CartItemId: row.CartItemId,
+            CreatedAt : row.CartItemCreatedAt,
+            ProductID : row.CartItemProductId,
+            Quantity : row.Quantity,
+            product : {
+                CarID : row.CarID,
+                CategoryID : row.CategoryID,
+                CreatedAt : row.ProductCreatedAt,
+                DeletedAt : row.DeletedAt,
+                Description : row.Description,
+                DiscountID : row.DiscountID,
+                ModifiedAt : row.ModifiedAt,
+                Price : row.Price,
+                ProductID : row.ProductID,
+                ProductInventoryID : row.ProductInventoryID, 
+                ProductName : row.ProductName,
+                ProductTypeBrandID : row.ProductTypeBrandID,
+                SKU : row.SKU, 
+                productIsOriginal : row.productIsOriginal,
+                productTypeID : row.productTypeID
+            }
+        }));
+
+        return items;
+
     } catch (error) {
-        return error.message;
+        console.error('Error decreasing cart quantity:', error);
+        throw new Error(error.message);
     }
-}
+};
+
+// const decreaseProductQuantityInCartData = async (cartItemId, cartId, productId) => {
+//     try {
+//         let pool = await connect({
+//             server: process.env.SQL_SERVER,
+//             user: process.env.SQL_USER,
+//             password: process.env.SQL_PASSWORD,
+//             database: process.env.SQL_DATABASE,
+//             options: {
+//                 encrypt: false,
+//                 enableArithAbort: true
+//             }
+//         });
+
+//         const sqlQueries = await loadSqlQueries('orders');
+
+//         const existingCartItem = await pool.request()
+//             .input('cartId', UniqueIdentifier, cartId)
+//             .input('cartItemId', Int, cartItemId)
+//             .input('productId', UniqueIdentifier, productId)
+//             .query(sqlQueries.getProductQuantityInCart);
+
+//         if (existingCartItem.recordset[0]?.Quantity !== 0 && existingCartItem.recordset[0]?.Quantity > 1) {
+//             const quantity = existingCartItem.recordset[0].Quantity - 1;
+
+//             await pool.request()
+//                 .input('quantity', Int, quantity)
+//                 .input('cartId', UniqueIdentifier, cartId)
+//                 .input('cartItemId', Int, cartItemId)
+//                 .input('productId', UniqueIdentifier, productId)
+//                 .query(sqlQueries.updateProductQuantityInCart);
+//         } else if (existingCartItem.recordset[0]?.Quantity === 1) {
+
+//             await pool.request()
+//                 .input('cartItemId', Int, cartItemId)
+//                 .query(sqlQueries.deleteCartItemFromCartItems);
+
+//         } else if (existingCartItem.recordset.length === 0) {
+//             return "Quantity is equal to zero";
+//         }
+//     } catch (error) {
+//         return error.message;
+//     }
+// }
 
 const increaseProductQuantityInCartData = async (cartId, productId) => {
     try {
