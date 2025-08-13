@@ -1,6 +1,6 @@
 use mydatabase;
 
-CREATE TABLE GuestUsers (
+CREATE TABLE [dbo].[GuestUsers] (
     GuestID INT PRIMARY KEY IDENTITY,
     Email NVARCHAR(255) NULL,
     Phone NVARCHAR(20) NULL,
