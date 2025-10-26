@@ -34,19 +34,32 @@ const getUserProfile = catchAsyncErrors( async (req, res) => {
 
 const addAddress = catchAsyncErrors( async (req, res) => {
 
-    const {
-        postalAddress, // آدرس پستی
-        addressHouseNumber, // پلاک
-        addressUnitNumber, // واحد
-        zipCode // کد پستی
-    } = req.body;
+    // const {
+    //     postalAddress, // آدرس پستی
+    //     addressHouseNumber, // پلاک
+    //     addressUnitNumber, // واحد
+    //     zipCode // کد پستی
+    // } = req.body;
 
-    const userId = req.userId;
+    const data = req.body;
 
-    let result = await addAddressData(postalAddress, addressHouseNumber, addressUnitNumber, zipCode, userId);
+    const userId = req.userId || null;
 
-    res.json({
-        result
+    const guestId = req.guestId || null;
+
+    if (!userId && !guestId) {
+        return res.status(400).json({
+            success: false,
+            message: 'UserID یا GuestID الزامی هست'
+        });
+    }
+
+    let result = await addAddressData(data, userId, guestId);
+
+    res.status(201).json({
+        success: true,
+        message: 'آدرس با موفقیت ثبت شد',
+        data: result
     });
 });
 
