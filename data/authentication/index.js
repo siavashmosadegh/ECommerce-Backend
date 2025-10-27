@@ -464,8 +464,8 @@ const loginRequestOTPData = async (phoneNumber) => {
             .input("userId", Int, userId)
             .query(sqlQueries.insertIntoOTPs);
 
-        const API_KEY = process.env.SMS_IR_API_KEY;
-        const PATTERN_CODE = process.env.SMS_IR_PATTERN_CODE;
+        const API_KEY = "1IC5R2XsGEAXjcqPVXJ8SMHLGyfDUYcizfmYsnjEFa2j9xBr";
+        const PATTERN_CODE = 780121;
 
         const response = await axios.post(
             "https://api.sms.ir/v1/send/verify",
@@ -486,7 +486,6 @@ const loginRequestOTPData = async (phoneNumber) => {
             }
         );
 
-        console.log("SMS sent:", response.data);
         return {
             success: true,
             message: "OTP Sent",
