@@ -10,7 +10,8 @@ import {
     updateUserData,
     loginUsersWithPhoneData,
     loginRequestOTPData,
-    loginVerifyOTPData
+    loginVerifyOTPData,
+    getUserByPhone
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -216,7 +217,30 @@ const loginVerifyOTP = catchAsyncErrors(async (req, res) => {
     return res.status(200).json({ message: "ورود موفق", token: result.token });
 });
 
+const sendOtpToPhone = catchAsyncErrors(async (req, res) => {
 
+    const { mobile } = req.body;
+
+    // create or reuse guest if user doesn't exist
+    let user = await getUserByPhone(mobile);
+    //let guest = await getGuestByPhone(mobile);
+
+    let guest = null;
+
+    if (!user && !guest) {
+        // = await createGuest({ mobile });
+    }
+
+    //const otpCode = await insertOtp( mobile );
+
+    res.json({
+        message: "OTP sent successfully",
+        user
+        //mobile,
+        // // فقط برای تست | در تولید حذف کن
+    });
+
+})
 
 export {
     registerUsers,
@@ -230,5 +254,6 @@ export {
     updateUser,
     loginUsersWithPhone,
     loginRequestOTP,
-    loginVerifyOTP
+    loginVerifyOTP,
+    sendOtpToPhone
 }

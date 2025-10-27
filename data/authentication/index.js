@@ -568,6 +568,44 @@ const loginVerifyOTPData = async (phoneNumber, otpCode) => {
     }
 };
 
+const getUserByPhone = async ( mobile ) => {
+    try {
+        let pool = await connect({
+        server: process.env.SQL_SERVER,
+        user: process.env.SQL_USER,
+        password: process.env.SQL_PASSWORD,
+        database: process.env.SQL_DATABASE,
+        options: {
+            encrypt: false,
+            enableArithAbort: true
+        }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        const existingUser = await pool.request()
+            .input('phoneNumber', NVarChar(20), mobile)
+            .query(sqlQueries.checkUserExistanceViaPhoneNumber);
+
+        if (existingUser.recordset.length === 0) {
+            return null
+        }
+
+        return existingUser.recordset[0];
+
+    } catch (error) {
+
+        console.error("Error:", error.message);
+
+        return {
+            success: false,
+            message: error.message || "Unknown error"
+        };
+
+    }
+}
+
+
 export {
     registerUsersData,
     loginUsersData,
@@ -580,5 +618,6 @@ export {
     updateUserData,
     loginUsersWithPhoneData,
     loginRequestOTPData,
-    loginVerifyOTPData
+    loginVerifyOTPData,
+    getUserByPhone
 }
