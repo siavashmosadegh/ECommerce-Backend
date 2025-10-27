@@ -11,7 +11,8 @@ import {
     loginUsersWithPhoneData,
     loginRequestOTPData,
     loginVerifyOTPData,
-    getUserByPhone
+    getUserByPhone,
+    getGuestByPhone
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -223,19 +224,17 @@ const sendOtpToPhone = catchAsyncErrors(async (req, res) => {
 
     // create or reuse guest if user doesn't exist
     let user = await getUserByPhone(mobile);
-    //let guest = await getGuestByPhone(mobile);
-
-    let guest = null;
+    let guest = await getGuestByPhone(mobile);
 
     if (!user && !guest) {
-        // = await createGuest({ mobile });
+        //console.log(`guest : ${guest}`)
     }
 
     //const otpCode = await insertOtp( mobile );
 
     res.json({
         message: "OTP sent successfully",
-        user
+        //guest
         //mobile,
         // // فقط برای تست | در تولید حذف کن
     });

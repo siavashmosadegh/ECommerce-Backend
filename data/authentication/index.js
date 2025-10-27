@@ -605,6 +605,45 @@ const getUserByPhone = async ( mobile ) => {
     }
 }
 
+const getGuestByPhone = async ( mobile ) => {
+    try {
+        let pool = await connect({
+        server: process.env.SQL_SERVER,
+        user: process.env.SQL_USER,
+        password: process.env.SQL_PASSWORD,
+        database: process.env.SQL_DATABASE,
+        options: {
+            encrypt: false,
+            enableArithAbort: true
+        }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        const existingGuestUser = await pool.request()
+            .input('mobile', NVarChar(20), mobile)
+            .query(sqlQueries.getGuestUserViaPhone);
+
+        //console.log(existingGuestUser.recordset[0]);
+
+        if (existingGuestUser.recordset.length === 0) {
+            return null
+        }
+
+        return existingGuestUser.recordset[0];
+
+    } catch (error) {
+
+        console.error("Error:", error.message);
+
+        return {
+            success: false,
+            message: error.message || "Unknown error"
+        };
+
+    }
+
+}
 
 export {
     registerUsersData,
@@ -619,5 +658,6 @@ export {
     loginUsersWithPhoneData,
     loginRequestOTPData,
     loginVerifyOTPData,
-    getUserByPhone
+    getUserByPhone,
+    getGuestByPhone
 }
