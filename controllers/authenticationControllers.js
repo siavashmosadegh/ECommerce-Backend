@@ -12,7 +12,8 @@ import {
     loginRequestOTPData,
     loginVerifyOTPData,
     getUserByPhone,
-    getGuestByPhone
+    getGuestByPhone,
+    createGuest
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -227,7 +228,7 @@ const sendOtpToPhone = catchAsyncErrors(async (req, res) => {
     let guest = await getGuestByPhone(mobile);
 
     if (!user && !guest) {
-        //console.log(`guest : ${guest}`)
+        await createGuest( mobile )
     }
 
     //const otpCode = await insertOtp( mobile );
