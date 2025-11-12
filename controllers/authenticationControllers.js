@@ -13,7 +13,8 @@ import {
     loginVerifyOTPData,
     getUserByPhone,
     getGuestByPhone,
-    createGuest
+    createGuest,
+    insertOtp
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -228,10 +229,26 @@ const sendOtpToPhone = catchAsyncErrors(async (req, res) => {
     let guest = await getGuestByPhone(mobile);
 
     if (!user && !guest) {
-        await createGuest( mobile )
+        await createGuest( mobile );
+        guest = await getGuestByPhone(mobile);
     }
 
-    //const otpCode = await insertOtp( mobile );
+    let ownerType , ownerRef;
+
+    if (user) {
+        ownerType = 'U';
+        ownerRef = user.UserID;
+    } else {
+        ownerType = 'G';
+        ownerRef = guest.GuestID;
+    }
+
+    const otpCode = await insertOtp( mobile, ownerType, ownerRef );
+
+    console.log(`otpCode stored in DB Successfully : ${otpCode}`);
+
+    // send SMS here
+    //await sendViaSmsIr(mobile, otpCode);
 
     res.json({
         message: "OTP sent successfully",

@@ -5,7 +5,15 @@ import {loadSqlQueries} from '../utils.js';
 import pkg from 'mssql';
 import pkg2 from 'bcryptjs';
 import pkg3 from 'jsonwebtoken';
-const {connect,sql,NVarChar,DateTime,Int,Request,DateTimeOffset} = pkg;
+const {
+    connect,
+    sql,
+    NVarChar,
+    DateTime,
+    Int,
+    Request,
+    DateTimeOffset
+} = pkg;
 const {hash, compare, compareSync} = pkg2;
 const {sign} = pkg3;
 import { v4 as uuidv4 } from 'uuid';
@@ -674,7 +682,53 @@ const createGuest = async ( mobile ) => {
         };
 
     }
+}
 
+const insertOtp = async ( mobile, ownerType, ownerRef ) => {
+    try {
+        let pool = await connect({
+        server: process.env.SQL_SERVER,
+        user: process.env.SQL_USER,
+        password: process.env.SQL_PASSWORD,
+        database: process.env.SQL_DATABASE,
+        options: {
+            encrypt: false,
+            enableArithAbort: true
+        }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        // Generate OTP
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 3 * 60 * 1000).toISOString();
+
+        // await pool.request()
+        //     .input('mobile', NVarChar(20), mobile)
+        //     .query(sqlQueries.createGuestUserViaPhone);
+
+        await pool.request()
+            .input("phoneNumber", NVarChar(20), mobile)
+            .input("otpCode", NVarChar(10), otpCode)
+            .input("expiresAt", DateTimeOffset, expiresAt)
+            // .input("ownerType", NVarChar(1), ownerType)
+            // .input("ownerRef", Int, ownerRef)
+            .input("userId", Int, ownerType === "U" ? ownerRef : null)
+            .input("guestId", Int, ownerType === "G" ? ownerRef : null )
+            .query(sqlQueries.insertOtp);
+
+        return otpCode;
+
+    } catch (error) {
+
+        console.error("Error:", error.message);
+
+        return {
+            success: false,
+            message: error.message || "Unknown error"
+        };
+
+    }    
 }
 
 export {
@@ -692,5 +746,6 @@ export {
     loginVerifyOTPData,
     getUserByPhone,
     getGuestByPhone,
-    createGuest
+    createGuest,
+    insertOtp
 }
