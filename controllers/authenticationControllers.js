@@ -19,6 +19,7 @@ import {
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import pkg3 from 'jsonwebtoken';
+import { sendViaSmsIr } from "../utils/smsService.js";
 const {verify} = pkg3;
 
 const registerUsers = catchAsyncErrors( async (req, res) => {
@@ -248,7 +249,7 @@ const sendOtpToPhone = catchAsyncErrors(async (req, res) => {
     console.log(`otpCode stored in DB Successfully : ${otpCode}`);
 
     // send SMS here
-    //await sendViaSmsIr(mobile, otpCode);
+    await sendViaSmsIr(mobile, otpCode);
 
     res.json({
         message: "OTP sent successfully",
