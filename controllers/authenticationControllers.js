@@ -249,9 +249,18 @@ const sendOtpToPhone = catchAsyncErrors(async (req, res) => {
     console.log(`otpCode stored in DB Successfully : ${otpCode}`);
 
     // send SMS here
-    await sendViaSmsIr(mobile, otpCode);
+    const smsResult = await sendViaSmsIr(mobile, otpCode);
 
-    res.json({
+    if (!smsResult.success) {
+        console.error("SMS sending failed : ",smsResult.message);
+        res.status(500).json({
+            message: "ارسال پیامک با خطا مواجه شد",
+            error: smsResult.message
+        }); 
+    }
+
+    res.status(200).json({
+        success: true,
         message: "OTP sent successfully",
         //guest
         //mobile,
