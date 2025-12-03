@@ -14,7 +14,8 @@ import {
     getUserByPhone,
     getGuestByPhone,
     createGuest,
-    insertOtp
+    insertOtp,
+    getOtpViaMobileAndOtp
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -269,6 +270,45 @@ const sendOtpToPhone = catchAsyncErrors(async (req, res) => {
 
 })
 
+const verifyOtpCode = catchAsyncErrors(async (req, res) => {
+
+    const {
+        otp,
+        mobile
+    } = req.body;
+
+    console.log(req.body);
+
+    // ۱. پیدا کردن OTP معتبر و استفاده‌نشده و تاریخ معتبر
+    
+    const otpCodeResult = await getOtpViaMobileAndOtp ( mobile, otp );
+
+    console.log(`otpCodeResult : ${JSON.stringify(otpCodeResult)}`);
+
+    if (!otpCodeResult) {
+        res.status(400).json({ message: "کد وارد شده اشتباه است" });
+    }
+
+    // 2. بررسی تاریخ انقضا
+
+    const now = new Date();
+
+    // دیتابیس ساعت رو بدون درنظر گرفتن تایم زون ذخیره میکنه 
+    // ولی
+    // نود جی اس تاریخ رو با توجه به تایم زون تغییر میده
+
+    const realDate = new Date(otpCodeResult.expiresAt.getTime() + otpCodeResult.expiresAt.getTimezoneOffset() * 60000);
+
+    console.log(`new Date(otpCodeResult.expiresAt) : ${realDate}`);
+    console.log(`now : ${now}`);
+
+    if (realDate < now) {
+        res.status(400).json({ message: "کد تایید منقضی شده است " })
+    }
+
+    
+})
+
 export {
     registerUsers,
     loginUsers,
@@ -282,5 +322,6 @@ export {
     loginUsersWithPhone,
     loginRequestOTP,
     loginVerifyOTP,
-    sendOtpToPhone
+    sendOtpToPhone,
+    verifyOtpCode
 }

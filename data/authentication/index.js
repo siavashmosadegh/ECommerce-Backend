@@ -731,6 +731,40 @@ const insertOtp = async ( mobile, ownerType, ownerRef ) => {
     }    
 }
 
+const getOtpViaMobileAndOtp = async (mobile, otp) => {
+    try {
+        let pool = await connect({
+        server: process.env.SQL_SERVER,
+        user: process.env.SQL_USER,
+        password: process.env.SQL_PASSWORD,
+        database: process.env.SQL_DATABASE,
+        options: {
+            encrypt: false,
+            enableArithAbort: true
+        }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        const result = await pool.request()
+            .input('mobile', NVarChar(20), mobile)
+            .input('otpCode', NVarChar(10), otp)
+            .query(sqlQueries.getOtpViaMobileAndOtp);
+
+        return result.recordset[0];
+
+    } catch (error) {
+
+        console.error("Error:", error.message);
+
+        return {
+            success: false,
+            message: error.message || "Unknown error"
+        };
+
+    }
+}
+
 export {
     registerUsersData,
     loginUsersData,
@@ -747,5 +781,6 @@ export {
     getUserByPhone,
     getGuestByPhone,
     createGuest,
-    insertOtp
+    insertOtp,
+    getOtpViaMobileAndOtp
 }
