@@ -47,6 +47,10 @@ const addAddress = catchAsyncErrors( async (req, res) => {
 
     const guestId = req.guestId || null;
 
+    console.log(`userId : ${userId}`);
+
+    console.log(`guestId: ${guestId}`);
+
     if (!userId && !guestId) {
         return res.status(400).json({
             success: false,
@@ -56,11 +60,18 @@ const addAddress = catchAsyncErrors( async (req, res) => {
 
     let result = await addAddressData(data, userId, guestId);
 
-    res.status(201).json({
-        success: true,
-        message: 'آدرس با موفقیت ثبت شد',
-        data: result
-    });
+    if (result === "either UserID or GuestID must have value but not both") {
+        res.status(400).json({
+            success: false,
+            message: "either UserID or GuestID must have value but not both"
+        });
+    } else {
+        res.status(201).json({
+            success: true,
+            message: 'آدرس با موفقیت ثبت شد',
+            data: result
+        });
+    }
 });
 
 const updateBirthInfo = catchAsyncErrors( async (req, res) => {
