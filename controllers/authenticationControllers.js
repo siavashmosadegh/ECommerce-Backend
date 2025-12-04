@@ -22,7 +22,7 @@ import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import pkg3 from 'jsonwebtoken';
 import { sendViaSmsIr } from "../utils/smsService.js";
-const {verify} = pkg3;
+const {verify,sign} = pkg3;
 
 const registerUsers = catchAsyncErrors( async (req, res) => {
     const {username, email, password} = req.body;
@@ -324,6 +324,21 @@ const verifyOtpCode = catchAsyncErrors(async (req, res) => {
     // 5. آپدیت کن که OTP استفاده شده
 
     await markOtpAsUsed(otpCodeResult.otpId);
+
+    // 6. ساخت JWT
+
+    const token = sign(tokenPayload, process.env.JWT_SECRET, {
+        expiresIn : "1h"
+    });
+
+    // 7. پاسخ نهایی
+
+    res.status(200).json({
+        message: "OTP Verified Successfully",
+        token,
+        ownerType: tokenPayload.type,
+        ownerId : tokenPayload.id
+    });
 
 })
 
