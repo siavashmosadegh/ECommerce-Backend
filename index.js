@@ -14,8 +14,6 @@ process.on('uncaughtException', (err) => {
 
 dotenv.config();
 
-console.log("siavash is back !!!");
-
 app.use(cors());
 
 // import all routes
@@ -24,6 +22,7 @@ import authenticationRoutes from './routes/authenticationRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import userReviewsRoutes from './routes/userReviewsRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import guestRoutes from './routes/guestRoutes.js';
 import {authenticateToken} from './middlewares/auth.js';
 
 app.use(bodyParser.json());
@@ -32,6 +31,7 @@ app.use("/api/v1", authenticationRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", userReviewsRoutes);
 app.use("/api/v1", userRoutes);
+app.use("/api/v1", guestRoutes);
 app.get('/api/v1/protecteed', authenticateToken, (req, res) => {
     res.json({ user: req.user });
 });
