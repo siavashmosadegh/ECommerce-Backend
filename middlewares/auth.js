@@ -44,9 +44,20 @@ const extractIdFromToken = (req, res, next) => {
             return err.message
         }
 
-        console.log(decoded);
+        console.log(`decoded : ${JSON.stringify(decoded)}`);
 
-        req.userId = decoded.id;
+        const {
+            type,
+            id,
+            iat,
+            exp
+        } = decoded
+
+        if ( type === "guest") {
+            req.guestId = id
+        } else {
+            req.userId = id
+        }
 
         next();
     })
