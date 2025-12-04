@@ -15,7 +15,8 @@ import {
     getGuestByPhone,
     createGuest,
     insertOtp,
-    getOtpViaMobileAndOtp
+    getOtpViaMobileAndOtp,
+    markOtpAsUsed
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -277,13 +278,9 @@ const verifyOtpCode = catchAsyncErrors(async (req, res) => {
         mobile
     } = req.body;
 
-    console.log(req.body);
-
     // ۱. پیدا کردن OTP معتبر و استفاده‌نشده و تاریخ معتبر
     
     const otpCodeResult = await getOtpViaMobileAndOtp ( mobile, otp );
-
-    console.log(`otpCodeResult : ${JSON.stringify(otpCodeResult)}`);
 
     if (!otpCodeResult) {
         res.status(400).json({ message: "کد وارد شده اشتباه است" });
@@ -299,14 +296,35 @@ const verifyOtpCode = catchAsyncErrors(async (req, res) => {
 
     const realDate = new Date(otpCodeResult.expiresAt.getTime() + otpCodeResult.expiresAt.getTimezoneOffset() * 60000);
 
-    console.log(`new Date(otpCodeResult.expiresAt) : ${realDate}`);
-    console.log(`now : ${now}`);
-
     if (realDate < now) {
         res.status(400).json({ message: "کد تایید منقضی شده است " })
     }
 
-    
+    // 3. بررسی اینکه کد قبلا استفاده شده یا نه
+    if (otpCodeResult.isUsed == 1) {
+        res.status(400).json({ message: "کد قبلا استفاده شده است"})
+    }
+
+    // 4. مشخص میکنیم کاربره یا مهمان
+
+    let tokenPayload;
+
+    if (otpCodeResult.userId) {
+        tokenPayload = {
+            type: "user",
+            id: otpCodeResult.userId
+        }
+    } else {
+        tokenPayload = {
+            type: "guest",
+            id: otpCodeResult.guestId
+        }
+    }
+
+    // 5. آپدیت کن که OTP استفاده شده
+
+    await markOtpAsUsed(otpCodeResult.otpId);
+
 })
 
 export {

@@ -765,6 +765,37 @@ const getOtpViaMobileAndOtp = async (mobile, otp) => {
     }
 }
 
+const markOtpAsUsed = async (otpId) => {
+    try {
+        let pool = await connect({
+        server: process.env.SQL_SERVER,
+        user: process.env.SQL_USER,
+        password: process.env.SQL_PASSWORD,
+        database: process.env.SQL_DATABASE,
+        options: {
+            encrypt: false,
+            enableArithAbort: true
+        }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        await pool.request()
+            .input("otpId", Int, otpId)
+            .query(sqlQueries.markOtpAsUsed)
+
+    } catch (error) {
+
+        console.error("Error:", error.message);
+
+        return {
+            success: false,
+            message: error.message || "Unknown error"
+        };
+
+    }    
+}
+
 export {
     registerUsersData,
     loginUsersData,
@@ -782,5 +813,6 @@ export {
     getGuestByPhone,
     createGuest,
     insertOtp,
-    getOtpViaMobileAndOtp
+    getOtpViaMobileAndOtp,
+    markOtpAsUsed
 }
