@@ -342,6 +342,60 @@ const verifyOtpCode = catchAsyncErrors(async (req, res) => {
 
 })
 
+const registerViaPhone = catchAsyncErrors(async (req, res) => {
+    try {
+        const {
+            mobile,
+            firstName,
+            lastName,
+            password
+        } = req.body;
+
+        if ( !mobile ) {
+            res.status(400).json({
+                success: false,
+                message: "موبایل وارد نشده"
+            });
+        } else if ( !firstName ) {
+            res.status(400).json({
+                success: false,
+                message: "نام وارد نشده"
+            });
+        } else if ( !lastName ) {
+            res.status(400).json({
+                success: false,
+                message: "نام خانوادگی"
+            });
+        } else if ( !password ) {
+            res.status(400).json({
+                success: false,
+                message: "پسورد وارد نشده"
+            });
+        } else {
+            console.log("everything is sent")
+        }
+
+        // 1. آیا User ای با این شماره ثبت نام کرده قبلا ؟|
+    
+        const existingUser = await getUserByPhone(mobile);
+
+        if (existingUser) {
+            res.status(400).json({
+                success: false,
+                message: "این شماره قبلا ثبت نام کرده است. لطفا وارد شوید"
+            })
+        }
+
+    } catch (error) {
+        console.error("REGISTER ERROR: ", error);
+
+        res.status(500).json({
+            success: false,
+            message: "خطای سرور"
+        })
+    }
+})
+
 export {
     registerUsers,
     loginUsers,
@@ -356,5 +410,6 @@ export {
     loginRequestOTP,
     loginVerifyOTP,
     sendOtpToPhone,
-    verifyOtpCode
+    verifyOtpCode,
+    registerViaPhone
 }
