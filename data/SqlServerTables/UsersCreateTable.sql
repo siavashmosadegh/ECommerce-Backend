@@ -1,7 +1,7 @@
 USE [mydatabase]
 GO
 
-/****** Object:  Table [dbo].[Users]    Script Date: 12/7/2025 1:49:05 PM ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 12/7/2025 2:00:57 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -39,4 +39,10 @@ ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [CK_Users_ValidEmail] CHEC
 GO
 
 ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [CK_Users_ValidEmail]
+GO
+
+ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [CK_Users_ValidMobile] CHECK  (([PhoneNumber] IS NULL OR [PhoneNumber] like '09%' AND len([PhoneNumber])=(11)))
+GO
+
+ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [CK_Users_ValidMobile]
 GO
