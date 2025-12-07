@@ -1,7 +1,7 @@
 USE [mydatabase]
 GO
 
-/****** Object:  Table [dbo].[Users]    Script Date: 12/7/2025 2:49:19 PM ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 12/7/2025 3:41:21 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -25,6 +25,7 @@ CREATE TABLE [dbo].[Users](
 	[BirthMonth] [int] NULL,
 	[BirthYear] [int] NULL,
 	[NationalCode] [nvarchar](10) NULL,
+	[RegistrationType] [varchar](50) NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[UserID] ASC
@@ -45,6 +46,12 @@ PRIMARY KEY CLUSTERED
 GO
 
 ALTER TABLE [dbo].[Users] ADD  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+
+ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [CK_Users_RegistrationType] CHECK  (([RegistrationType]='migrateFromGuestUsers' OR [RegistrationType]='initialPhone' OR [RegistrationType]='initialEmail'))
+GO
+
+ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [CK_Users_RegistrationType]
 GO
 
 ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [CK_Users_ValidEmail] CHECK  (([Email] IS NULL OR [Email] like '%_@_%._%'))
