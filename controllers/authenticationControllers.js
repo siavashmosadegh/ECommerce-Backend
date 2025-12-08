@@ -16,13 +16,16 @@ import {
     createGuest,
     insertOtp,
     getOtpViaMobileAndOtp,
-    markOtpAsUsed
+    markOtpAsUsed,
+    createUserViaPhone
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import pkg3 from 'jsonwebtoken';
 import { sendViaSmsIr } from "../utils/smsService.js";
 const {verify,sign} = pkg3;
+import pkg2 from 'bcryptjs';
+const {hash, compare, compareSync} = pkg2;
 
 const registerUsers = catchAsyncErrors( async (req, res) => {
     const {username, email, password} = req.body;
@@ -384,6 +387,35 @@ const registerViaPhone = catchAsyncErrors(async (req, res) => {
                 success: false,
                 message: "این شماره قبلا ثبت نام کرده است. لطفا وارد شوید"
             })
+        }
+
+        // 2. آیا guest وجود دارد ؟
+
+        const existingGuest = await getGuestByPhone(mobile);
+
+        console.log(`existingGuest: ${JSON.stringify(existingGuest)}`);
+
+        if (existingGuest) {
+            // Turn existingGuest to 
+            
+            console.log('ding ding ding we have a winner');
+
+            let newUserId;
+        } else {
+            // Create New User
+
+            const hashedPassword = await hash(password,10);
+
+            console.log(hashedPassword);
+
+            let newUserId = await createUserViaPhone(
+                mobile,
+                firstName,
+                lastName,
+                password
+            );
+
+            console.log(newUserId);
         }
 
     } catch (error) {

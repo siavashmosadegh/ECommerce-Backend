@@ -12,7 +12,8 @@ const {
     DateTime,
     Int,
     Request,
-    DateTimeOffset
+    DateTimeOffset,
+    VarChar
 } = pkg;
 const {hash, compare, compareSync} = pkg2;
 const {sign} = pkg3;
@@ -796,6 +797,51 @@ const markOtpAsUsed = async (otpId) => {
     }    
 }
 
+const createUserViaPhone = async (mobile, firstName, lastName, passwordHash) => {
+    try {
+        let pool = await connect({
+        server: process.env.SQL_SERVER,
+        user: process.env.SQL_USER,
+        password: process.env.SQL_PASSWORD,
+        database: process.env.SQL_DATABASE,
+        options: {
+            encrypt: false,
+            enableArithAbort: true
+        }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        const insert = await pool.request()
+            .input("PhoneNumber", NVarChar(20), mobile)
+            .input("FirstName", NVarChar(100), firstName)
+            .input("LastName", NVarChar(100), lastName)
+            .input("PasswordHash", Int, passwordHash)
+            .input("RegistrationType", VarChar(50), 'initialPhone')
+            .query(sqlQueries.createUserViaPhone);
+
+        const value = { userId: insert.recordset[0].UserID};
+
+        return value;
+
+        // const insert = await pool.request()
+        //     .input('UserID', Int, userID)
+        //     .query(sqlQueries.insertIntoCartViaUserIdINITIALY);
+        // const value = { cartId: insert.recordset[0].CartId, items: [] }
+        // return value;
+        
+    } catch (error) {
+
+        console.error("Error:", error.message);
+
+        return {
+            success: false,
+            message: error.message || "Unknown error"
+        };
+
+    }
+}
+
 export {
     registerUsersData,
     loginUsersData,
@@ -814,5 +860,6 @@ export {
     createGuest,
     insertOtp,
     getOtpViaMobileAndOtp,
-    markOtpAsUsed
+    markOtpAsUsed,
+    createUserViaPhone
 }
