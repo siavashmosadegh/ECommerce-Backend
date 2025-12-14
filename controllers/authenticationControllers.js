@@ -17,7 +17,8 @@ import {
     insertOtp,
     getOtpViaMobileAndOtp,
     markOtpAsUsed,
-    createUserViaPhone
+    createUserViaPhone,
+    insertRegisterDataAndGenerateOTP
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -345,7 +346,7 @@ const verifyOtpCode = catchAsyncErrors(async (req, res) => {
 
 })
 
-const registerViaPhone = catchAsyncErrors(async (req, res) => {
+const registerViaPhoneRequestOtp = catchAsyncErrors(async (req, res) => {
     try {
         const {
             mobile,
@@ -393,8 +394,6 @@ const registerViaPhone = catchAsyncErrors(async (req, res) => {
 
         const existingGuest = await getGuestByPhone(mobile);
 
-        console.log(`existingGuest: ${JSON.stringify(existingGuest)}`);
-
         if (existingGuest) {
             // Turn existingGuest to 
             
@@ -402,20 +401,21 @@ const registerViaPhone = catchAsyncErrors(async (req, res) => {
 
             let newUserId;
         } else {
-            // Create New User
+            // 1. insert Register Data temporarily
 
             const hashedPassword = await hash(password,10);
 
-            console.log(hashedPassword);
-
-            let newUserId = await createUserViaPhone(
+            const otpCode = await insertRegisterDataAndGenerateOTP(
                 mobile,
                 firstName,
                 lastName,
-                password
+                hashedPassword
             );
 
-            console.log(newUserId);
+            console.log(`otpCode stored in DB Successfully : ${otpCode}`);
+
+            // 2. send otp via sms.ir
+
         }
 
     } catch (error) {
@@ -426,6 +426,21 @@ const registerViaPhone = catchAsyncErrors(async (req, res) => {
             message: "خطای سرور"
         })
     }
+})
+
+const registerViaPhoneVerifyOtp = catchAsyncErrors(async (req, res) => {
+    try {
+
+
+        
+    } catch (error) {
+        console.error("REGISTER ERROR: ", error);
+
+        res.status(500).json({
+            success: false,
+            message: "خطای سرور"
+        })
+    }    
 })
 
 export {
@@ -443,5 +458,6 @@ export {
     loginVerifyOTP,
     sendOtpToPhone,
     verifyOtpCode,
-    registerViaPhone
+    registerViaPhoneRequestOtp,
+    registerViaPhoneVerifyOtp
 }

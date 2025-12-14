@@ -842,6 +842,52 @@ const createUserViaPhone = async (mobile, firstName, lastName, passwordHash) => 
     }
 }
 
+const insertRegisterDataAndGenerateOTP = async (mobile, firstName, lastName, hashedPassword) => {
+    try {
+        let pool = await connect({
+        server: process.env.SQL_SERVER,
+        user: process.env.SQL_USER,
+        password: process.env.SQL_PASSWORD,
+        database: process.env.SQL_DATABASE,
+        options: {
+            encrypt: false,
+            enableArithAbort: true
+        }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        // Generate OTP
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 3 * 60 * 1000).toISOString();
+
+        const result = await pool.request()
+            .input("otpCode", NVarChar(10), otpCode)
+            .input("PhoneNumber", NVarChar(20), mobile)
+            .input("FirstName", NVarChar(100), firstName)
+            .input("LastName", NVarChar(100), lastName)
+            .input("PasswordHash", NVarChar(255), hashedPassword)
+            .input("expiresAt", DateTimeOffset, expiresAt)
+            .query(sqlQueries.insertIntoRegisterData);
+
+        if (result.recordset.length === 0) {
+            throw new Error ('Insert Failed');
+        }
+
+        return otpCode;
+
+    } catch (error) {
+
+        console.error("Error:", error.message);
+
+        return {
+            success: false,
+            message: error.message || "Unknown error"
+        };
+
+    }
+}
+
 export {
     registerUsersData,
     loginUsersData,
@@ -861,5 +907,6 @@ export {
     insertOtp,
     getOtpViaMobileAndOtp,
     markOtpAsUsed,
-    createUserViaPhone
+    createUserViaPhone,
+    insertRegisterDataAndGenerateOTP
 }

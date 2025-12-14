@@ -14,7 +14,8 @@ import {
     loginVerifyOTP,
     sendOtpToPhone,
     verifyOtpCode,
-    registerViaPhone
+    registerViaPhoneRequestOtp,
+    registerViaPhoneVerifyOtp
 } from "../controllers/authenticationControllers.js";
 import {
     authenticateToken,
@@ -44,7 +45,8 @@ router.route("/login/via-phone").post( validatePhoneNumber, loginUsersWithPhone)
 //router.route("/login/request-otp").post( validatePhoneNumber, loginRequestOTP );
 //router.route("/login/verify-otp").post(validatePhoneNumber, validateOTPCode, loginVerifyOTP);
 
-router.route("/auth/register").post( validatePhoneNumber, registerViaPhone );
+router.route("/auth/register/request-otp").post( validatePhoneNumber, registerViaPhoneRequestOtp );
+router.route("/auth/register/verify-otp").post( validatePhoneNumber, validateOTPCode, registerViaPhoneVerifyOtp );
 router.route("/auth/login/request-otp").post( validatePhoneNumber, sendOtpToPhone );
 router.route("/auth/login/verify-otp").post( validatePhoneNumber, validateOTPCode, verifyOtpCode );
 
