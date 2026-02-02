@@ -23,7 +23,10 @@ import {
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import pkg3 from 'jsonwebtoken';
-import { sendViaSmsIr } from "../utils/smsService.js";
+import {
+    sendOtpForLogin,
+    sendOtpForRegister
+} from "../utils/smsService.js";
 const {verify,sign} = pkg3;
 import pkg2 from 'bcryptjs';
 const {hash, compare, compareSync} = pkg2;
@@ -227,7 +230,7 @@ const loginVerifyOTP = catchAsyncErrors(async (req, res) => {
     return res.status(200).json({ message: "ورود موفق", token: result.token });
 });
 
-const sendOtpToPhone = catchAsyncErrors(async (req, res) => {
+const loginViaPhoneRequestOtp = catchAsyncErrors(async (req, res) => {
 
     const { mobile } = req.body;
 
@@ -255,7 +258,7 @@ const sendOtpToPhone = catchAsyncErrors(async (req, res) => {
     console.log(`otpCode stored in DB Successfully : ${otpCode}`);
 
     // send SMS here
-    const smsResult = await sendViaSmsIr(mobile, otpCode);
+    const smsResult = await sendOtpForLogin(mobile, otpCode);
 
     if (!smsResult.success) {
         console.error("SMS sending failed : ",smsResult.message);
@@ -383,6 +386,8 @@ const registerViaPhoneRequestOtp = catchAsyncErrors(async (req, res) => {
     
         const existingUser = await getUserByPhone(mobile);
 
+        console.log(existingUser);
+
         if (existingUser) {
             res.status(400).json({
                 success: false,
@@ -398,6 +403,8 @@ const registerViaPhoneRequestOtp = catchAsyncErrors(async (req, res) => {
             // Turn existingGuest to 
             
             console.log('ding ding ding we have a winner');
+
+            console.log('this number exists as guests');
 
             let newUserId;
         } else {
@@ -415,6 +422,24 @@ const registerViaPhoneRequestOtp = catchAsyncErrors(async (req, res) => {
             console.log(`otpCode stored in DB Successfully : ${otpCode}`);
 
             // 2. send otp via sms.ir
+
+            const smsResult = await sendOtpForRegister(mobile, otpCode);
+
+            if (!smsResult.success) {
+                console.error("SMS sending failed : ",smsResult.message);
+                res.status(500).json({
+                    message: "ارسال پیامک با خطا مواجه شد",
+                    error: smsResult.message
+                }); 
+            }
+
+            res.status(200).json({
+                success: true,
+                message: "OTP sent successfully",
+                //guest
+                //mobile,
+                // // فقط برای تست | در تولید حذف کن
+            });
 
         }
 
@@ -456,7 +481,7 @@ export {
     loginUsersWithPhone,
     loginRequestOTP,
     loginVerifyOTP,
-    sendOtpToPhone,
+    loginViaPhoneRequestOtp,
     verifyOtpCode,
     registerViaPhoneRequestOtp,
     registerViaPhoneVerifyOtp

@@ -12,7 +12,7 @@ import {
     loginUsersWithPhone,
     loginRequestOTP,
     loginVerifyOTP,
-    sendOtpToPhone,
+    loginViaPhoneRequestOtp,
     verifyOtpCode,
     registerViaPhoneRequestOtp,
     registerViaPhoneVerifyOtp
@@ -47,7 +47,7 @@ router.route("/login/via-phone").post( validatePhoneNumber, loginUsersWithPhone)
 
 router.route("/auth/register/request-otp").post( validatePhoneNumber, registerViaPhoneRequestOtp );
 router.route("/auth/register/verify-otp").post( validatePhoneNumber, validateOTPCode, registerViaPhoneVerifyOtp );
-router.route("/auth/login/request-otp").post( validatePhoneNumber, sendOtpToPhone );
+router.route("/auth/login/request-otp").post( validatePhoneNumber, loginViaPhoneRequestOtp );
 router.route("/auth/login/verify-otp").post( validatePhoneNumber, validateOTPCode, verifyOtpCode );
 
 export default router;
