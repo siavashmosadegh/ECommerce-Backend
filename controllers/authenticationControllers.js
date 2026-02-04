@@ -484,6 +484,12 @@ const registerViaPhoneVerifyOtp = catchAsyncErrors(async (req, res) => {
             res.status(400).json({ message: "کد تایید منقضی شده است " })
         }
 
+        // 3. بررسی اینکه کد قبلا استفاده شده یا نه
+
+        if (otpCode.isUsed == 1) {
+            res.status(400).json({ message: "کد قبلا استفاده شده است"})
+        }
+
     } catch (error) {
         console.error("REGISTER ERROR: ", error);
 
