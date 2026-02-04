@@ -19,7 +19,8 @@ import {
     markOtpAsUsed,
     createUserViaPhone,
     insertRegisterDataAndGenerateOTP,
-    getOtpFromRegisterOTP
+    getOtpFromRegisterOTP,
+    markRegisterOtpAsUsed
 } from "../data/authentication/index.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
@@ -489,6 +490,10 @@ const registerViaPhoneVerifyOtp = catchAsyncErrors(async (req, res) => {
         if (otpCode.isUsed == 1) {
             res.status(400).json({ message: "کد قبلا استفاده شده است"})
         }
+
+        // 4. آپدیت کن که OTP استفاده شده
+
+        await markRegisterOtpAsUsed(otpCode.RegisterOTPsId);
 
     } catch (error) {
         console.error("REGISTER ERROR: ", error);

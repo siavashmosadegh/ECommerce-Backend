@@ -891,14 +891,14 @@ const insertRegisterDataAndGenerateOTP = async (mobile, firstName, lastName, has
 const getOtpFromRegisterOTP = async (mobile, otp) => {
     try {
         let pool = await connect({
-        server: process.env.SQL_SERVER,
-        user: process.env.SQL_USER,
-        password: process.env.SQL_PASSWORD,
-        database: process.env.SQL_DATABASE,
-        options: {
-            encrypt: false,
-            enableArithAbort: true
-        }
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
         });
 
         const sqlQueries = await loadSqlQueries('authentication');
@@ -926,6 +926,37 @@ const getOtpFromRegisterOTP = async (mobile, otp) => {
     }    
 }
 
+const markRegisterOtpAsUsed = async (RegisterOTPsId) => {
+    try {
+        let pool = await connect({
+            server: process.env.SQL_SERVER,
+            user: process.env.SQL_USER,
+            password: process.env.SQL_PASSWORD,
+            database: process.env.SQL_DATABASE,
+            options: {
+                encrypt: false,
+                enableArithAbort: true
+            }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        await pool.request()
+            .input("RegisterOTPsId", Int, RegisterOTPsId)
+            .query(sqlQueries.markRegisterOtpAsUsed);
+
+    } catch (error) {
+
+        console.error("Error:", error.message);
+
+        return {
+            success: false,
+            message: error.message || "Unknown error"
+        };
+
+    }
+}
+
 export {
     registerUsersData,
     loginUsersData,
@@ -947,5 +978,6 @@ export {
     markOtpAsUsed,
     createUserViaPhone,
     insertRegisterDataAndGenerateOTP,
-    getOtpFromRegisterOTP
+    getOtpFromRegisterOTP,
+    markRegisterOtpAsUsed
 }
