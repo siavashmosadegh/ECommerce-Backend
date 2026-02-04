@@ -888,6 +888,44 @@ const insertRegisterDataAndGenerateOTP = async (mobile, firstName, lastName, has
     }
 }
 
+const getOtpFromRegisterOTP = async (mobile, otp) => {
+    try {
+        let pool = await connect({
+        server: process.env.SQL_SERVER,
+        user: process.env.SQL_USER,
+        password: process.env.SQL_PASSWORD,
+        database: process.env.SQL_DATABASE,
+        options: {
+            encrypt: false,
+            enableArithAbort: true
+        }
+        });
+
+        const sqlQueries = await loadSqlQueries('authentication');
+
+        const result = await pool.request()
+            .input("otp", NVarChar(10), otp)
+            .input("mobile", NVarChar(100), mobile)
+            .query(sqlQueries.getOtpFromRegisterOtp);
+
+        if (result.recordset.length === 0) {
+            throw new Error ('No OTP for that Phone Number');
+        }
+
+        return result.recordset[0];
+
+    } catch (error) {
+
+        console.error("Error:", error.message);
+
+        return {
+            success: false,
+            message: error.message || "Unknown error"
+        };
+
+    }    
+}
+
 export {
     registerUsersData,
     loginUsersData,
@@ -908,5 +946,6 @@ export {
     getOtpViaMobileAndOtp,
     markOtpAsUsed,
     createUserViaPhone,
-    insertRegisterDataAndGenerateOTP
+    insertRegisterDataAndGenerateOTP,
+    getOtpFromRegisterOTP
 }
