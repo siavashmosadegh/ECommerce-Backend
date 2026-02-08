@@ -12,6 +12,8 @@ process.on('uncaughtException', (err) => {
     process.exit(1);
 })
 
+console.log("testing from Hamgaman pOoya !!");
+
 dotenv.config();
 
 app.use(cors());
