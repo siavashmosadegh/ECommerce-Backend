@@ -20,5 +20,5 @@ CREATE TABLE [dbo].[Product] (
     FOREIGN KEY ([ProductInventoryID]) REFERENCES [dbo].[ProductInventory] ([ProductInventoryID]),
     FOREIGN KEY ([ProductTypeBrandID]) REFERENCES [dbo].[ProductTypeBrand] ([ProductTypeBrandID]),
     FOREIGN KEY ([productTypeID]) REFERENCES [dbo].[ProductType] ([productTypeID]),
-    CONSTRAINT [FK_Product_Category] FOREIGN KEY ([CategoryID]) REFERENCES [dbo].[Category] ([CategoryID]) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT [FK_Product_Category] FOREIGN KEY ([CategoryID]) REFERENCES [dbo].[Category] ([CategoryID])
 );
