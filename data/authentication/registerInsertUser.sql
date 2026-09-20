@@ -5,11 +5,13 @@ INSERT INTO [dbo].[Users]
         [UserName],
         [Email],
         [PasswordHash],
-        [Role]
+        [Role],
+        [RegistrationType]
     )
 VALUES (
     @username,
     @email,
     @passwordHash,
-    @role
+    @role,
+    'initialEmail'
     )

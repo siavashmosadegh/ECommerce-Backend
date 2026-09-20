@@ -58,7 +58,7 @@ const registerUsersData = async (username, email, password) => {
             .input('username', NVarChar, username)
             .input('email', NVarChar, email)
             .input('passwordHash', NVarChar, hashedPassword)
-            .input('role', NVarChar, "admin")
+            .input('role', NVarChar, "customer")
             .query(sqlQueries.registerInsertUser);
 
         return "User registered Successfully";
