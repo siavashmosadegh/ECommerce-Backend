@@ -44,6 +44,10 @@ const getOrderDetails = catchAsyncErrors( async (req, res) => {
         res.json({
             message: "Order Not Found"
         })
+    } else if (Number(result.order.UserID) !== Number(req.user.id)) {
+        res.status(403).json({
+            message: "شما اجازه‌ی دیدن این سفارش را ندارید"
+        })
     } else {
         res.json({
             result
@@ -75,6 +79,12 @@ const updateOrderStatus = catchAsyncErrors( async (req, res) => {
 const getAllOrdersOfOneUser = catchAsyncErrors( async (req, res) => {
 
     const userId = req.params.userId;
+
+    if (Number(userId) !== Number(req.user.id)) {
+        return res.status(403).json({
+            message: "شما اجازه‌ی دیدن سفارش‌های این کاربر را ندارید"
+        })
+    }
 
     const result = await getAllOrdersOfOneUserData(userId);
 
